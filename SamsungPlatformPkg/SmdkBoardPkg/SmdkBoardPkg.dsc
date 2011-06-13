@@ -227,9 +227,10 @@
   RVCT:*_*_ARM_ARCHASM_FLAGS == --cpu Cortex-A9 -I$(WORKSPACE)/SamsungPlatformPkg/SmdkBoardPkg/Include/Platform
   RVCT:RELEASE_*_*_CC_FLAGS  = -DMDEPKG_NDEBUG -I$(WORKSPACE)/SamsungPlatformPkg/SmdkBoardPkg/Include/Platform
 
-  GCC:*_*_ARM_ARCHCC_FLAGS    == -march=armv7-a -mthumb -I$(WORKSPACE)/SamsungPlatformPkg/ExynosPkg/Include/Platform
-  GCC:*_*_ARM_ARCHASM_FLAGS   == -march=armv7-a -I$(WORKSPACE)/SamsungPlatformPkg/ExynosPkg/Include/Platform
-  GCC:RELEASE_*_*_CC_FLAGS    = -DMDEPKG_NDEBUG -I$(WORKSPACE)/SamsungPlatformPkg/ExynosPkg/Include/Platform
+  GCC:*_*_ARM_ARCHCC_FLAGS    == -march=armv7-a -mthumb -mthumb-interwork -I$(WORKSPACE)/SamsungPlatformPkg/ExynosPkg/Include/Platform
+  GCC:*_*_ARM_ARCHASM_FLAGS   == -march=armv7-a -mthumb-interwork -I$(WORKSPACE)/SamsungPlatformPkg/ExynosPkg/Include/Platform
+  GCC:*_*_ARM_CC_FLAGS        =  -Os -mword-relocations -mfpu=vfp -ffixed-r8
+  GCC:RELEASE_*_*_CC_FLAGS    =  -DMDEPKG_NDEBUG -I$(WORKSPACE)/SamsungPlatformPkg/ExynosPkg/Include/Platform
 
   XCODE:*_*_ARM_ARCHCC_FLAGS     == -arch armv7 -march=armv7 -I$(WORKSPACE)/SamsungPlatformPkg/SmdkBoardPkg/Include/Platform
   XCODE:*_*_ARM_ARCHASM_FLAGS    == -arch armv7 -I$(WORKSPACE)/SamsungPlatformPkg/SmdkBoardPkg/Include/Platform
