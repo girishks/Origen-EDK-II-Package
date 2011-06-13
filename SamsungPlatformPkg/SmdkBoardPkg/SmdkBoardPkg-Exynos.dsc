@@ -17,15 +17,15 @@
 #
 ################################################################################
 [Defines]
-  PLATFORM_NAME                  = SmdkBoard-RTSM-A9x2
+  PLATFORM_NAME                  = SmdkBoard-Exynos
   PLATFORM_GUID                  = 66a5a01d-be0a-4398-9b74-5af4a261381f
   PLATFORM_VERSION               = 0.1
   DSC_SPECIFICATION              = 0x00010005
-  OUTPUT_DIRECTORY               = Build/SmdkBoard-RTSM-A9x2
+  OUTPUT_DIRECTORY               = Build/SmdkBoard-Exynos
   SUPPORTED_ARCHITECTURES        = ARM
   BUILD_TARGETS                  = DEBUG|RELEASE
   SKUID_IDENTIFIER               = DEFAULT
-  FLASH_DEFINITION               = SamsungPlatformPkg/SmdkBoardPkg/SmdkBoardPkg.fdf
+  FLASH_DEFINITION               = SamsungPlatformPkg/SmdkBoardPkg/SmdkBoardPkg-Exynos.fdf
 
 [LibraryClasses.common]
 !if $(BUILD_TARGETS) == RELEASE
@@ -38,7 +38,7 @@
 !endif
   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   ArmLib|ArmPkg/Library/ArmLib/ArmV7/ArmV7MPCoreLib.inf
-  ArmPlatformLib|SamsungPlatformPkg/SmdkBoardPkg/Library/SmdkBoardLibRTSM/SmdkBoardLib.inf
+  ArmPlatformLib|SamsungPlatformPkg/SmdkBoardPkg/Library/SmdkBoardLib/SmdkBoardLib.inf
   ArmMPCoreMailBoxLib|ArmPkg/Library/ArmMPCoreMailBoxLib/ArmMPCoreMailBoxLib.inf
 
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
@@ -122,7 +122,7 @@
 [LibraryClasses.common.SEC]
   ArmLib|ArmPkg/Library/ArmLib/ArmV7/ArmV7MPCoreLibSec.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
-  ArmPlatformLib|SamsungPlatformPkg/SmdkBoardPkg/Library/SmdkBoardLibRTSM/SmdkBoardSecLib.inf
+  ArmPlatformLib|SamsungPlatformPkg/SmdkBoardPkg/Library/SmdkBoardLib/SmdkBoardSecLib.inf
 
   # 1/123 faster than Stm or Vstm version
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
