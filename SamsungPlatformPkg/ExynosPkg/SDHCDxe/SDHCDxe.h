@@ -24,9 +24,6 @@
 #include <Library/PcdLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>
-#include <Library/DmaLib.h>
-
-#include <Protocol/EmbeddedExternalDevice.h>
 #include <Protocol/BlockIo.h>
 #include <Protocol/DevicePath.h>
 

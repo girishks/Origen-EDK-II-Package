@@ -276,7 +276,6 @@ GraphicsConsoleControllerDriverStart (
   if (Private == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-  DEBUG((EFI_D_ERROR, "++Private=0x%0x\n\n\n",Private));
   Private->SimpleTextOutput.Mode = &(Private->SimpleTextOutputMode);
 
   Status = gBS->OpenProtocol (
@@ -584,7 +583,6 @@ GraphicsConsoleControllerDriverStop (
   }
 
   Private = GRAPHICS_CONSOLE_CON_OUT_DEV_FROM_THIS (SimpleTextOutput);
-  DEBUG((EFI_D_ERROR, "Private=0x%0x\n\n\n",Private));
   Status = gBS->UninstallProtocolInterface (
                   Controller,
                   &gEfiSimpleTextOutProtocolGuid,

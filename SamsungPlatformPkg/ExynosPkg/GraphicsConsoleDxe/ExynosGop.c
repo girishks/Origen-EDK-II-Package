@@ -25,10 +25,11 @@
 #include <Library/IoLib.h>
 #include <Library/TimerLib.h>
 #include <Protocol/GraphicsOutput.h>
-#include <Protocol/EmbeddedGpio.h>
+#include <Protocol/ExynosGpio.h>
 #include <Platform/ArmPlatform.h>
 #include "ExynosGop.h"
 #include "GraphicsConsole.h"
+
 
 //#define LCD_AMS369FG06
 #define LCD_WA101S
@@ -97,9 +98,9 @@ VOID ConfigureLcd0Clk(VOID)
 VOID ConfigureLcdGpio(VOID)
 {
   EFI_STATUS    Status;
-  EMBEDDED_GPIO *Gpio;
+  EXYNOS_GPIO *Gpio;
 
-  Status = gBS->LocateProtocol(&gEmbeddedGpioProtocolGuid, NULL, (VOID **)&Gpio);
+  Status = gBS->LocateProtocol(&gExynosGpioProtocolGuid, NULL, (VOID **)&Gpio);
   ASSERT_EFI_ERROR(Status);
 
 /********************************************************************************
@@ -125,6 +126,16 @@ VOID ConfigureLcdGpio(VOID)
   Gpio->SetPull(Gpio,LCD_VD_2,GPIO_PULL_NONE);
   Gpio->SetPull(Gpio,LCD_VD_3,GPIO_PULL_NONE);
 
+
+  Gpio->SetStrength(Gpio,LCD_HSYNC,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VSYNC,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VDEN,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VCLK,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_0,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_1,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_2,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_3,GPIO_DRV_4X);
+
 /********************************************************************************
 	GPIO Control
 	Pull Up/Down
@@ -147,6 +158,16 @@ VOID ConfigureLcdGpio(VOID)
   Gpio->SetPull(Gpio,LCD_VD_9,GPIO_PULL_NONE);
   Gpio->SetPull(Gpio,LCD_VD_10,GPIO_PULL_NONE);
   Gpio->SetPull(Gpio,LCD_VD_11,GPIO_PULL_NONE);
+
+
+  Gpio->SetStrength(Gpio,LCD_VD_4,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_5,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_6,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_7,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_8,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_9,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_10,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_11,GPIO_DRV_4X);
 
 /********************************************************************************
 	GPIO Control
@@ -171,6 +192,16 @@ VOID ConfigureLcdGpio(VOID)
   Gpio->SetPull(Gpio,LCD_VD_18,GPIO_PULL_NONE);
   Gpio->SetPull(Gpio,LCD_VD_19,GPIO_PULL_NONE);
 
+
+  Gpio->SetStrength(Gpio,LCD_VD_12,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_13,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_14,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_15,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_16,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_17,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_18,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_19,GPIO_DRV_4X);
+
 /********************************************************************************
 	GPIO Control
 	Pull Up/Down
@@ -186,6 +217,12 @@ VOID ConfigureLcdGpio(VOID)
   Gpio->SetPull(Gpio,LCD_VD_22,GPIO_PULL_NONE);
   Gpio->SetPull(Gpio,LCD_VD_23,GPIO_PULL_NONE);
 
+
+  Gpio->SetStrength(Gpio,LCD_VD_20,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_21,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_22,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,LCD_VD_23,GPIO_DRV_4X);
+
   /* Set FIMD0 bypass */
   MmioOr32((PcdGet32(PcdSysBase) + SYS_DISPLAY_CONTROL_OFFSET), FIMDBYPASS_LBLK0);
 
@@ -199,9 +236,9 @@ VOID ConfigureLcdGpio(VOID)
 VOID EnableBackLight(VOID)
 {
   EFI_STATUS    Status;
-  EMBEDDED_GPIO *Gpio;
+  EXYNOS_GPIO *Gpio;
 
-  Status = gBS->LocateProtocol(&gEmbeddedGpioProtocolGuid, NULL, (VOID **)&Gpio);
+  Status = gBS->LocateProtocol(&gExynosGpioProtocolGuid, NULL, (VOID **)&Gpio);
   ASSERT_EFI_ERROR(Status);
 
   Gpio->Set(Gpio,LCD_BACKLIGHT,GPIO_MODE_OUTPUT_1);
@@ -482,9 +519,7 @@ ExynosGopConstructor (
 
   /* Initialize Display */
   LCD_Initialize();
-  DEBUG((EFI_D_ERROR, "++GraphicsConsoleConstructor()\n\n\n"));
   if(Private->GraphicsOutput->Mode == NULL){
-  DEBUG((EFI_D_ERROR, "++GraphicsConsoleConstructor(AllocatePool 1)\n\n\n"));
     Status = gBS->AllocatePool(
 		    EfiBootServicesData,
 		    sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE),
@@ -494,7 +529,6 @@ ExynosGopConstructor (
     ZeroMem(Private->GraphicsOutput->Mode,sizeof(EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE));
   }
   if(Private->GraphicsOutput->Mode->Info==NULL){
-  DEBUG((EFI_D_ERROR, "++GraphicsConsoleConstructor(AllocatePool 2)\n\n\n"));
     Status = gBS->AllocatePool(
 		    EfiBootServicesData,
 		    sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION),
@@ -503,7 +537,6 @@ ExynosGopConstructor (
    ASSERT_EFI_ERROR(Status);
     ZeroMem(Private->GraphicsOutput->Mode->Info,sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION));
   }
-  DEBUG((EFI_D_ERROR, "++GraphicsConsoleConstructor(1)\n\n\n"));
   /* Fill out mode information */
   Private->GraphicsOutput->Mode->MaxMode = 1;
   Private->GraphicsOutput->Mode->Mode = 0;
@@ -515,7 +548,6 @@ ExynosGopConstructor (
   Private->GraphicsOutput->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
   Private->GraphicsOutput->Mode->FrameBufferBase = FB_ADDR;
   Private->GraphicsOutput->Mode->FrameBufferSize = (LCD_WIDTH * LCD_HEIGHT * 4);
-  DEBUG((EFI_D_ERROR, "++GraphicsConsoleConstructor(2)\n\n\n"));
   return Status;
 }
 
@@ -524,7 +556,6 @@ ExynosGopDestructor (
 	GRAPHICS_CONSOLE_DEV *Private
   )
 {
-  DEBUG((EFI_D_ERROR, "++ExynosGopDestructor(1)\n\n\n"));
   //
   // Free graphics output protocol occupied resource
   //
@@ -540,6 +571,5 @@ ExynosGopDestructor (
       }
     }
   }
-  DEBUG((EFI_D_ERROR, "--ExynosGopDestructor(1)\n\n\n"));
   return EFI_SUCCESS;
 }

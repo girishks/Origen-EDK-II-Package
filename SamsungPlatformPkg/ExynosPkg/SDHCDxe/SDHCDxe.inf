@@ -26,7 +26,6 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  EmbeddedPkg/EmbeddedPkg.dec
   SamsungPlatformPkg/ExynosPkg/ExynosPkg.dec
 
 [LibraryClasses]
@@ -39,7 +38,7 @@
 [Protocols]
   gEfiBlockIoProtocolGuid
   gEfiDevicePathProtocolGuid
-  gEmbeddedGpioProtocolGuid			## GPIO Protocol
+  gExynosGpioProtocolGuid			## GPIO Protocol
 
 [Pcd]
   gExynosPkgTokenSpaceGuid.PcdCmuBase

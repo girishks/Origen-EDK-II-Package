@@ -17,14 +17,17 @@
 #include <Library/DebugLib.h>
 #include <Library/IoLib.h>
 #include <Library/UefiBootServicesTableLib.h>
-#include <Protocol/EmbeddedGpio.h>
+#include <Protocol/ExynosGpio.h>
 #include <Platform/ArmPlatform.h>
 #include <Library/ExynosLib.h>
 
+
+extern EFI_GUID gExynosGpioProtocolGuid;
+
 EFI_STATUS
 Get (
-  IN  EMBEDDED_GPIO     *This,
-  IN  EMBEDDED_GPIO_PIN Gpio,
+  IN  EXYNOS_GPIO     *This,
+  IN  EXYNOS_GPIO_PIN Gpio,
   OUT UINTN               *Value
   )
 {
@@ -53,9 +56,9 @@ Get (
 
 EFI_STATUS
 Set (
-  IN  EMBEDDED_GPIO       *This,
-  IN  EMBEDDED_GPIO_PIN   Gpio,
-  IN  EMBEDDED_GPIO_MODE  Mode
+  IN  EXYNOS_GPIO       *This,
+  IN  EXYNOS_GPIO_PIN   Gpio,
+  IN  EXYNOS_GPIO_MODE  Mode
   )
 {
   UINTN  Port;
@@ -89,9 +92,9 @@ Set (
 
 EFI_STATUS
 GetMode (
-  IN  EMBEDDED_GPIO       *This,
-  IN  EMBEDDED_GPIO_PIN   Gpio,
-  OUT EMBEDDED_GPIO_MODE  *Mode
+  IN  EXYNOS_GPIO       *This,
+  IN  EXYNOS_GPIO_PIN   Gpio,
+  OUT EXYNOS_GPIO_MODE  *Mode
   )
 {
   return EFI_UNSUPPORTED;
@@ -99,9 +102,9 @@ GetMode (
 
 EFI_STATUS
 SetPull (
-  IN  EMBEDDED_GPIO       *This,
-  IN  EMBEDDED_GPIO_PIN   Gpio,
-  IN  EMBEDDED_GPIO_PULL  Direction
+  IN  EXYNOS_GPIO       *This,
+  IN  EXYNOS_GPIO_PIN   Gpio,
+  IN  EXYNOS_GPIO_PULL  Direction
   )
 {
   UINTN  Port;
@@ -129,11 +132,35 @@ SetPull (
   return EFI_SUCCESS;
 }
 
-EMBEDDED_GPIO Gpio = {
+
+
+EFI_STATUS
+SetStrength (
+    IN EXYNOS_GPIO      *This,
+    IN EXYNOS_GPIO_PIN  Gpio,
+    IN EXYNOS_GPIO_STRN  Strength
+    )
+{
+  UINTN  Port;
+  UINTN  Pin;
+  UINT32 OutputRegister;
+
+  Port    = GPIO_PORT(Gpio);
+  Pin     = GPIO_PIN(Gpio);
+  OutputRegister = GpioBase(Port) + GPIO_DRV;
+  MmioAndThenOr32(OutputRegister, ~GPIO_DRV_MASK(Pin), GPIO_DRV_SET(Strength,Pin));
+
+  return EFI_SUCCESS;
+}
+
+
+
+EXYNOS_GPIO Gpio = {
   Get,
   Set,
   GetMode,
   SetPull,
+  SetStrength
 };
 
 EFI_STATUS
@@ -144,6 +171,6 @@ GpioInitialize (
 {
   EFI_STATUS  Status;
 
-  Status = gBS->InstallMultipleProtocolInterfaces(&ImageHandle, &gEmbeddedGpioProtocolGuid, &Gpio, NULL);
+  Status = gBS->InstallMultipleProtocolInterfaces(&ImageHandle, &gExynosGpioProtocolGuid, &Gpio, NULL);
   return Status;
 }

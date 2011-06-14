@@ -23,10 +23,11 @@
 
 #include <Library/TimerLib.h>
 #include <Library/PcdLib.h>
-#include <Protocol/EmbeddedGpio.h>
+#include <Protocol/ExynosGpio.h>
 #include <Platform/ArmPlatform.h>
 
 #include "SDHCDxe.h"
+
 
 EFI_BLOCK_IO_MEDIA gSDHCMedia = {
   SIGNATURE_32('s','d','h','c'),            // MediaId
@@ -382,11 +383,11 @@ InitializeSDHC (
 {
 
   EFI_STATUS    Status;
-  EMBEDDED_GPIO *Gpio;
+  EXYNOS_GPIO *Gpio;
   UINT32 CumBaseAddr;
   UINT32 SdMmcBaseAddr;
 
-  Status = gBS->LocateProtocol(&gEmbeddedGpioProtocolGuid, NULL, (VOID **)&Gpio);
+  Status = gBS->LocateProtocol(&gExynosGpioProtocolGuid, NULL, (VOID **)&Gpio);
   ASSERT_EFI_ERROR(Status);
 
   CumBaseAddr = PcdGet32(PcdCmuBase);
@@ -413,6 +414,15 @@ InitializeSDHC (
   Gpio->SetPull(Gpio,SD_2_DATA1,GPIO_PULL_UP);
   Gpio->SetPull(Gpio,SD_2_DATA2,GPIO_PULL_UP);
   Gpio->SetPull(Gpio,SD_2_DATA3,GPIO_PULL_UP);
+
+
+  Gpio->SetStrength(Gpio,SD_2_CLK,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,SD_2_CMD,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,SD_2_CDn,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,SD_2_DATA0,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,SD_2_DATA1,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,SD_2_DATA2,GPIO_DRV_4X);
+  Gpio->SetStrength(Gpio,SD_2_DATA3,GPIO_DRV_4X);
 
   return EFI_SUCCESS;
 }
@@ -766,192 +776,6 @@ WriteBlockData (
   return EFI_SUCCESS;
 }
 
-/*
-EFI_STATUS
-DmaBlocks (
-  IN EFI_BLOCK_IO_PROTOCOL        *This,
-  IN  UINTN                       Lba,
-  IN OUT VOID                     *Buffer,
-  IN  UINTN                       BlockCount,
-  IN  OPERATION_TYPE              OperationType
-  )
-{
-  EFI_STATUS            Status;
-  UINTN                 DmaSize = 0;
-  UINTN                 Cmd = 0;
-  UINTN                 CmdInterruptEnable;
-  UINTN                 CmdArgument;
-  VOID                  *BufferMap;
-  EFI_PHYSICAL_ADDRESS  BufferAddress;
-  OMAP_DMA4             Dma4;
-  DMA_MAP_OPERATION     DmaOperation;
-  EFI_STATUS            MmcStatus;
-  UINTN                 RetryCount = 0;
-
-CpuDeadLoop ();
-  // Map passed in buffer for DMA xfer
-  DmaSize = BlockCount * This->Media->BlockSize;
-  Status = DmaMap (DmaOperation, Buffer, &DmaSize, &BufferAddress, &BufferMap);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
-  ZeroMem (&DmaOperation, sizeof (DMA_MAP_OPERATION));
-
-
-  Dma4.DataType = 2;                      // DMA4_CSDPi[1:0]   32-bit elements from SDHC_BDATA
-
-  Dma4.SourceEndiansim = 0;               // DMA4_CSDPi[21]
-
-  Dma4.DestinationEndianism = 0;          // DMA4_CSDPi[19]
-
-  Dma4.SourcePacked = 0;                  // DMA4_CSDPi[6]
-
-  Dma4.DestinationPacked = 0;             // DMA4_CSDPi[13]
-
-  Dma4.NumberOfElementPerFrame = This->Media->BlockSize/4; // DMA4_CENi  (TRM 4K is optimum value)
-
-  Dma4.NumberOfFramePerTransferBlock = BlockCount;         // DMA4_CFNi
-
-  Dma4.ReadPriority = 0;                  // DMA4_CCRi[6]      Low priority read
-
-  Dma4.WritePriority = 0;                 // DMA4_CCRi[23]     Prefetech disabled
-
-
-  //Populate the command information based on the operation type.
-  if (OperationType == READ) {
-    Cmd = CMD18; //Multiple block read
-    CmdInterruptEnable = CMD18_INT_EN;
-    DmaOperation = MapOperationBusMasterCommonBuffer;
-
-    Dma4.ReadPortAccessType =0 ;            // DMA4_CSDPi[8:7]   Can not burst SDHC_BDATA reg
-
-    Dma4.WritePortAccessType = 3;           // DMA4_CSDPi[15:14] Memory burst 16x32
-
-    Dma4.WriteMode = 1;                     // DMA4_CSDPi[17:16] Write posted
-
-
-
-    Dma4.SourceStartAddress = SDHC_BDATA;                   // DMA4_CSSAi
-
-    Dma4.DestinationStartAddress = (UINT32)BufferAddress;   // DMA4_CDSAi
-
-    Dma4.SourceElementIndex = 1;                            // DMA4_CSEi
-
-    Dma4.SourceFrameIndex = 0x200;                          // DMA4_CSFi
-
-    Dma4.DestinationElementIndex = 1;                       // DMA4_CDEi
-
-    Dma4.DestinationFrameIndex = 0;                         // DMA4_CDFi
-
-
-
-    Dma4.ReadPortAccessMode = 0;            // DMA4_CCRi[13:12]  Always read SDHC_BDATA
-
-    Dma4.WritePortAccessMode = 1;           // DMA4_CCRi[15:14]  Post increment memory address
-
-    Dma4.ReadRequestNumber = 0x1e;          // DMA4_CCRi[4:0]    Syncro with MMCA_DMA_RX (61)
-
-    Dma4.WriteRequestNumber = 1;            // DMA4_CCRi[20:19]  Syncro upper 0x3e == 62 (one based)
-
-		PrepareTransfer(CardtoHost, BlockCount);
-  } else if (OperationType == WRITE) {
-    Cmd = CMD25; //Multiple block write
-    CmdInterruptEnable = CMD25_INT_EN;
-    DmaOperation = MapOperationBusMasterRead;
-
-    Dma4.ReadPortAccessType = 3;            // DMA4_CSDPi[8:7]   Memory burst 16x32
-
-    Dma4.WritePortAccessType = 0;           // DMA4_CSDPi[15:14] Can not burst SDHC_BDATA reg
-
-    Dma4.WriteMode = 1;                     // DMA4_CSDPi[17:16] Write posted ???
-
-
-
-    Dma4.SourceStartAddress = (UINT32)BufferAddress;        // DMA4_CSSAi
-
-    Dma4.DestinationStartAddress = SDHC_BDATA;              // DMA4_CDSAi
-
-    Dma4.SourceElementIndex = 1;                            // DMA4_CSEi
-
-    Dma4.SourceFrameIndex = 0x200;                          // DMA4_CSFi
-
-    Dma4.DestinationElementIndex = 1;                       // DMA4_CDEi
-
-    Dma4.DestinationFrameIndex = 0;                         // DMA4_CDFi
-
-
-
-    Dma4.ReadPortAccessMode = 1;            // DMA4_CCRi[13:12]  Post increment memory address
-
-    Dma4.WritePortAccessMode = 0;           // DMA4_CCRi[15:14]  Always write SDHC_BDATA
-
-    Dma4.ReadRequestNumber = 0x1d;          // DMA4_CCRi[4:0]    Syncro with MMCA_DMA_TX (60)
-
-    Dma4.WriteRequestNumber = 1;            // DMA4_CCRi[20:19]  Syncro upper 0x3d == 61 (one based)
-
-		PrepareTransfer(HosttoCard, BlockCount);
-  } else {
-    return EFI_INVALID_PARAMETER;
-  }
-
-
-  EnableDmaChannel (2, &Dma4);
-
-
-  //Set command argument based on the card access mode (Byte mode or Block mode)
-  if (gCardInfo.OCRData.AccessMode & BIT1) {
-    CmdArgument = Lba;
-  } else {
-    CmdArgument = Lba * This->Media->BlockSize;
-  }
-
-  //Send Command.
-  Status = SendCmd (Cmd, CmdInterruptEnable, CmdArgument);
-  if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "CMD fails. Status: %x\n", Status));
-    return Status;
-  }
-
-    //Check for the Transfer completion.
-  while (RetryCount < MAX_RETRY_COUNT) {
-    //Read Status
-    do {
-      MmcStatus = MmioRead32 (SDHC_INTSTS);
-    } while (MmcStatus == 0);
-
-    //Check if Transfer complete (TRNSCOMP) bit is set?
-    if (MmcStatus & TRNSCOMP) {
-      break;
-    } else {
-      DEBUG ((EFI_D_ERROR, "MmcStatus for TRNSCOMP: %x\n", MmcStatus));
-      //Check if DEB, DCRC or DTO interrupt occured.
-      if ((MmcStatus & DEB) | (MmcStatus & DCRC) | (MmcStatus & DTO)) {
-        //There was an error during the data transfer.
-
-        //Set SRD bit to 1 and wait until it return to 0x0.
-        MmioOr32 (SDHC_SYSCTL, SRD);
-        while((MmioRead32 (SDHC_SYSCTL) & SRD) != 0x0);
-
-        DisableDmaChannel (2, DMA4_CSR_BLOCK, DMA4_CSR_ERR);
-        DmaUnmap (BufferMap);
-        return EFI_DEVICE_ERROR;
-      }
-    }
-    RetryCount++;
-  }
-
-  DisableDmaChannel (2, DMA4_CSR_BLOCK, DMA4_CSR_ERR);
-  Status = DmaUnmap (BufferMap);
-
-  if (RetryCount == MAX_RETRY_COUNT) {
-    DEBUG ((EFI_D_ERROR, "TransferBlockData timed out.\n"));
-    return EFI_TIMEOUT;
-  }
-
-  return Status;
-}
-*/
 
 EFI_STATUS
 TransferBlock (
