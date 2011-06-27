@@ -27,9 +27,8 @@
 
 
 [FD.SmdkBoard_EFI]
-BaseAddress   = 0x40000000  # The base address of the FLASH Device.
-#BaseAddress   = 0x40000000  # The base address of the FLASH Device.
-Size          = 0x00200000  # The size in bytes of the FLASH Device
+BaseAddress   = 0x43E00000
+Size          = 0x00200000
 ErasePolarity = 1
 BlockSize     = 0x00010000
 NumBlocks     = 0x20

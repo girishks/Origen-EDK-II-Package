@@ -66,9 +66,7 @@
   DefaultExceptioHandlerLib|ArmPkg/Library/DefaultExceptionHandlerLib/DefaultExceptionHandlerLib.inf
 
   SemihostLib|ArmPkg/Library/SemihostLib/SemihostLib.inf
-
-  RealTimeClockLib|ArmPlatformPkg/Library/PL031RealTimeClockLib/PL031RealTimeClockLib.inf
-
+  RealTimeClockLib|EmbeddedPkg/Library/TemplateRealTimeClockLib/TemplateRealTimeClockLib.inf
   IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
 
   UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
@@ -341,10 +339,7 @@
   gArmPlatformTokenSpaceGuid.PcdPeiServicePtrAddr|0x48020004        # Pei Services Ptr just above stack
 
   # Non Sec UEFI Firmware: These two PCDs must match PcdFlashFvMainBase/PcdFlashFvMainSize
-  #gEmbeddedTokenSpaceGuid.PcdEmbeddedFdBaseAddress|0x4000000       # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainBase
- #gArmTokenSpaceGuid.PcdNormalFdBaseAddress|0x40050000       # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainBase
-  gArmTokenSpaceGuid.PcdNormalFdBaseAddress |0x40010000       # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainBase
-  #gEmbeddedTokenSpaceGuid.PcdEmbeddedFdSize|0x00100000              # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainSize
+  gArmTokenSpaceGuid.PcdNormalFdBaseAddress |0x43E10000       # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainBase
   gArmTokenSpaceGuid.PcdNormalFdSize|0x00100000              # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainSize
 
   gEmbeddedTokenSpaceGuid.PcdTimerPeriod|100000        # expressed in 100ns units, 100,000 x 100 ns = 10,000,000 ns = 10 ms
