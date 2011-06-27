@@ -194,6 +194,6 @@ struct _EXYNOS_GPIO {
   EXYNOS_GPIO_DRV	SetStrength;
 };
 
-extern EFI_GUID gExynosGpioProtocolGuid;
+extern EFI_GUID gSamsungPlatformGpioProtocolGuid;
 
 #endif

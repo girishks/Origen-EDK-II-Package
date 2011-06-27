@@ -100,7 +100,7 @@ VOID ConfigureLcdGpio(VOID)
   EFI_STATUS    Status;
   EXYNOS_GPIO *Gpio;
 
-  Status = gBS->LocateProtocol(&gExynosGpioProtocolGuid, NULL, (VOID **)&Gpio);
+  Status = gBS->LocateProtocol(&gSamsungPlatformGpioProtocolGuid, NULL, (VOID **)&Gpio);
   ASSERT_EFI_ERROR(Status);
 
 /********************************************************************************
@@ -238,7 +238,7 @@ VOID EnableBackLight(VOID)
   EFI_STATUS    Status;
   EXYNOS_GPIO *Gpio;
 
-  Status = gBS->LocateProtocol(&gExynosGpioProtocolGuid, NULL, (VOID **)&Gpio);
+  Status = gBS->LocateProtocol(&gSamsungPlatformGpioProtocolGuid, NULL, (VOID **)&Gpio);
   ASSERT_EFI_ERROR(Status);
 
   Gpio->Set(Gpio,LCD_BACKLIGHT,GPIO_MODE_OUTPUT_1);

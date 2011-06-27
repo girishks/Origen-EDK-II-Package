@@ -387,7 +387,7 @@ InitializeSDHC (
   UINT32 CumBaseAddr;
   UINT32 SdMmcBaseAddr;
 
-  Status = gBS->LocateProtocol(&gExynosGpioProtocolGuid, NULL, (VOID **)&Gpio);
+  Status = gBS->LocateProtocol(&gSamsungPlatformGpioProtocolGuid, NULL, (VOID **)&Gpio);
   ASSERT_EFI_ERROR(Status);
 
   CumBaseAddr = PcdGet32(PcdCmuBase);

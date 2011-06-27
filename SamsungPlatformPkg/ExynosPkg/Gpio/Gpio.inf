@@ -27,6 +27,7 @@
 [Packages]
   MdePkg/MdePkg.dec
   SamsungPlatformPkg/ExynosPkg/ExynosPkg.dec
+  SamsungPlatformPkg/SamsungPlatformPkg.dec
 
 [LibraryClasses]
   IoLib
@@ -37,7 +38,7 @@
 [Guids]
 
 [Protocols]
-  gExynosGpioProtocolGuid
+ gSamsungPlatformGpioProtocolGuid
 
 [Pcd]
 

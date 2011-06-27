@@ -44,6 +44,7 @@
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   SamsungPlatformPkg/ExynosPkg/ExynosPkg.dec
+  SamsungPlatformPkg/SamsungPlatformPkg.dec
 
 [LibraryClasses]
   BaseLib
@@ -59,7 +60,7 @@
   gEfiUgaDrawProtocolGuid                       ## TO_START
   gEfiHiiFontProtocolGuid                       ## TO_START
   gEfiHiiDatabaseProtocolGuid                   ## TO_START
-  gExynosGpioProtocolGuid			## GPIO Protocol
+  gSamsungPlatformGpioProtocolGuid		## GPIO Protocol
 
 [Guids]
 

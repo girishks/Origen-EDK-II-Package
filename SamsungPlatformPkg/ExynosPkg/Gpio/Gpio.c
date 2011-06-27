@@ -22,7 +22,6 @@
 #include <Library/ExynosLib.h>
 
 
-extern EFI_GUID gExynosGpioProtocolGuid;
 
 EFI_STATUS
 Get (
@@ -171,6 +170,6 @@ GpioInitialize (
 {
   EFI_STATUS  Status;
 
-  Status = gBS->InstallMultipleProtocolInterfaces(&ImageHandle, &gExynosGpioProtocolGuid, &Gpio, NULL);
+  Status = gBS->InstallMultipleProtocolInterfaces(&ImageHandle, &gSamsungPlatformGpioProtocolGuid, &Gpio, NULL);
   return Status;
 }

@@ -27,6 +27,7 @@
 [Packages]
   MdePkg/MdePkg.dec
   SamsungPlatformPkg/ExynosPkg/ExynosPkg.dec
+  SamsungPlatformPkg/SamsungPlatformPkg.dec
 
 [LibraryClasses]
   UefiDriverEntryPoint
@@ -38,7 +39,7 @@
 [Protocols]
   gEfiBlockIoProtocolGuid
   gEfiDevicePathProtocolGuid
-  gExynosGpioProtocolGuid			## GPIO Protocol
+  gSamsungPlatformGpioProtocolGuid			## GPIO Protocol
 
 [Pcd]
   gExynosPkgTokenSpaceGuid.PcdCmuBase
