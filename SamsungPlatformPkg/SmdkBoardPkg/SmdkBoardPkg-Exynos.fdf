@@ -27,8 +27,8 @@
 
 
 [FD.SmdkBoard_EFI]
-BaseAddress   = 0x43E00000
-Size          = 0x00200000
+BaseAddress   = 0x43E00000|gArmTokenSpaceGuid.PcdNormalFdBaseAddress
+Size          = 0x00200000|gArmTokenSpaceGuid.PcdNormalFdSize
 ErasePolarity = 1
 BlockSize     = 0x00010000
 NumBlocks     = 0x20
@@ -50,11 +50,11 @@ NumBlocks     = 0x20
 ################################################################################
 
 0x0000000|0x00010000
-gEmbeddedTokenSpaceGuid.PcdFlashFvSecBase|gEmbeddedTokenSpaceGuid.PcdFlashFvSecSize
+gArmTokenSpaceGuid.PcdSecureFvBaseAddress|gArmTokenSpaceGuid.PcdSecureFvBaseSize
 FV = FVMAIN_SEC
 
 0x00010000|0x00100000
-gEmbeddedTokenSpaceGuid.PcdFlashFvMainBase|gEmbeddedTokenSpaceGuid.PcdFlashFvMainSize
+gArmTokenSpaceGuid.PcdNormalFvBaseAddress|gArmTokenSpaceGuid.PcdNormalFvSize
 FV = FVMAIN_COMPACT
 
 0x00110000|0x00010000
