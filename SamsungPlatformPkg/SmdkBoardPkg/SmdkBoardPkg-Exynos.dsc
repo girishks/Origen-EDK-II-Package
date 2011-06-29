@@ -374,11 +374,19 @@
   #
   # ARM OS Loader
   #
-  # Versatile Express machine type (ARM VERSATILE EXPRESS = 2272) required for ARM Linux:
-  gArmTokenSpaceGuid.PcdArmMachineType|2925
-  gArmTokenSpaceGuid.PcdLinuxKernelDP|L"VenHw(B615F1F5-5088-43CD-809C-A16E52487D00)/MemoryMapped(0,0x40008000,0x40400000)"
-  gArmTokenSpaceGuid.PcdLinuxAtag|"rdinit=/bin/ash debug earlyprintk console=ttyAMA0,115200"
-  gArmTokenSpaceGuid.PcdFdtDP|L""
+  #gArmTokenSpaceGuid.PcdArmMachineType|2925
+  gArmTokenSpaceGuid.PcdArmMachineType|2456
+  gArmPlatformTokenSpaceGuid.PcdDefaultBootDescription|L"SD-MMC Booting"
+  gArmPlatformTokenSpaceGuid.PcdDefaultBootDevicePath|L"VenHw(B615F1F5-5088-43CD-809C-A16E52487D00)/HD(1,MBR,0x6F20736B,0x1D6E74,0x58A400)/zImage"
+  gArmPlatformTokenSpaceGuid.PcdDefaultBootArgument|"root=/dev/mmcblk0p2 rw rootwait console=ttySAC1,115200 init=/linuxrc"
+  gArmPlatformTokenSpaceGuid.PcdDefaultBootType|1
+  gArmPlatformTokenSpaceGuid.PcdFirmwareVendor|L"Samsung Exynos4210-SMDK Board"
+
+# Use the Serial console (ConIn & ConOut) and the Graphic driver (ConOut)
+  gArmPlatformTokenSpaceGuid.PcdDefaultConOutPaths|L"VenHw(6696936D-3637-467C-87CB-14EA8248948C)/Uart(115200,8,N,1)"
+  gArmPlatformTokenSpaceGuid.PcdDefaultConInPaths|L"VenHw(6696936D-3637-467C-87CB-14EA8248948C)/Uart(115200,8,N,1)"
+  gArmPlatformTokenSpaceGuid.PcdPlatformBootTimeOut|10
+
 
   #
   # ARM L2x0 PCDs
