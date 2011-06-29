@@ -38,5 +38,5 @@
   ArmLib
   CacheMaintenanceLib
 [Pcd]
-  gEmbeddedTokenSpaceGuid.PcdFlashFvMainBase
+  gArmTokenSpaceGuid.PcdNormalFvBaseAddress
   gExynosPkgTokenSpaceGuid.PcdPmuBase
