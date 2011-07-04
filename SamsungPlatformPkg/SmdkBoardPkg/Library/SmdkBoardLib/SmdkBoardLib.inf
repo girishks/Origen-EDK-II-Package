@@ -40,8 +40,8 @@
 
 [FeaturePcd]
   gEmbeddedTokenSpaceGuid.PcdCacheEnable
-  gArmPlatformTokenSpaceGuid.PcdStandalone
 [FixedPcd]
+  gArmPlatformTokenSpaceGuid.PcdStandalone
   gArmTokenSpaceGuid.PcdNormalFdSize
   gArmTokenSpaceGuid.PcdNormalFdBaseAddress
   gArmTokenSpaceGuid.PcdSystemMemoryBase

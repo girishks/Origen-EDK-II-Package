@@ -157,7 +157,7 @@ VOID ArmPlatformGetEfiMemoryMap (
     MemoryBase += PcdGet32(PcdSystemMemoryUefiRegionSize);//ARM_EB_EFI_MEMORY_REGION_SZ;
 
     // We must reserve the memory used by the Firmware Volume copied in DRAM at 0x80000000
-    if (FeaturePcdGet(PcdStandalone) == FALSE) {
+    if (!PcdGet32(PcdStandalone)) {
         // Chunk between the EFI Memory region and the firmware
         EfiMemoryTable[++Index].ResourceAttribute = Attributes;
         EfiMemoryTable[Index].PhysicalStart = MemoryBase;

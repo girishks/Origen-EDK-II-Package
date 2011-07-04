@@ -129,7 +129,7 @@
   #DebugAgentLib|EmbeddedPkg/Library/GdbDebugAgent/GdbDebugAgent.inf
 
   # L2 Cache Driver
-  L2X0CacheLib|ArmPkg/Drivers/PL310L2Cache/PL310L2CacheSec.inf
+  L2X0CacheLib|ArmPlatformPkg/Drivers/PL310L2Cache/PL310L2CacheSec.inf
   # ARM PL390 General Interrupt Driver in Secure and Non-secure
   PL390GicSecLib|ArmPkg/Drivers/PL390Gic/PL390GicSec.inf
   PL390GicNonSecLib|ArmPkg/Drivers/PL390Gic/PL390GicNonSec.inf
@@ -257,13 +257,13 @@
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
 
-  gArmPlatformTokenSpaceGuid.PcdStandalone|TRUE
 
 !if $(EDK2_SKIP_PEICORE) == 1
   gArmTokenSpaceGuid.PcdSkipPeiCore|TRUE
 !endif
 
 [PcdsFixedAtBuild.common]
+  gArmPlatformTokenSpaceGuid.PcdStandalone|1
   gEmbeddedTokenSpaceGuid.PcdEmbeddedPrompt|"EXYNOS4210 %"
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize|32
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0
@@ -423,8 +423,8 @@
     <LibraryClasses>
       PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   }
-  ArmPlatformPkg/PlatformPei/PlatformPei.inf
-  ArmPlatformPkg/MemoryInitPei/MemoryInitPei.inf
+  ArmPlatformPkg/PlatformPei/PlatformPeim.inf
+  ArmPlatformPkg/MemoryInitPei/MemoryInitPeim.inf
   IntelFrameworkModulePkg/Universal/StatusCode/Pei/StatusCodePei.inf
   Nt32Pkg/BootModePei/BootModePei.inf
   MdeModulePkg/Universal/Variable/Pei/VariablePei.inf

@@ -239,8 +239,8 @@ READ_LOCK_STATUS   = TRUE
 
   INF ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
   INF MdeModulePkg/Core/Pei/PeiMain.inf
-  INF ArmPlatformPkg/PlatformPei/PlatformPei.inf
-  INF ArmPlatformPkg/MemoryInitPei/MemoryInitPei.inf
+  INF ArmPlatformPkg/PlatformPei/PlatformPeim.inf
+  INF ArmPlatformPkg/MemoryInitPei/MemoryInitPeim.inf
   INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
   INF IntelFrameworkModulePkg/Universal/StatusCode/Pei/StatusCodePei.inf
   INF MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
