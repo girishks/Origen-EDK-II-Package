@@ -517,6 +517,7 @@ ExynosGopConstructor (
 {
   EFI_STATUS  Status;
 
+  Status = EFI_SUCCESS;
   /* Initialize Display */
   LCD_Initialize();
   if(Private->GraphicsOutput->Mode == NULL){
