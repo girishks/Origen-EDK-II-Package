@@ -23,6 +23,7 @@
 #define DDR_ATTRIBUTES_SECURE_CACHED    ARM_MEMORY_REGION_ATTRIBUTE_SECURE_WRITE_BACK
 #define DDR_ATTRIBUTES_SECURE_UNCACHED  ARM_MEMORY_REGION_ATTRIBUTE_SECURE_UNCACHED_UNBUFFERED
 
+#if 0
 /**
   Return the information about the memory region in permanent memory used by PEI
 
@@ -44,7 +45,7 @@ VOID ArmPlatformGetPeiMemory (
     *PeiMemoryBase = PcdGet32(PcdSystemMemoryBase) + PcdGet32(PcdSystemMemoryFixRegionSize);
     *PeiMemorySize = PcdGet32(PcdSystemMemoryUefiRegionSize);
 }
-
+#endif
 /**
   Return the Virtual Memory Map of your platform
 
@@ -107,7 +108,7 @@ VOID ArmPlatformGetVirtualMemoryMap(ARM_MEMORY_REGION_DESCRIPTOR** VirtualMemory
 
 
 
-
+#if 0
 /**
   Return the EFI Memory Map of your platform
 
@@ -186,7 +187,7 @@ VOID ArmPlatformGetEfiMemoryMap (
 
     *EfiMemoryMap = EfiMemoryTable;
 }
-
+#endif
 
 /**
   Return the EFI Memory Map of your platform

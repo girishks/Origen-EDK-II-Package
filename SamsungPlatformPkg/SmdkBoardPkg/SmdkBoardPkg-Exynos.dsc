@@ -256,14 +256,14 @@
   gArmTokenSpaceGuid.PcdCpuDxeProduceDebugSupport|FALSE
 
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
-
+  gArmPlatformTokenSpaceGuid.PcdStandalone|TRUE
+  gArmPlatformTokenSpaceGuid.PcdSystemMemoryInitializeInSec|TRUE
 
 !if $(EDK2_SKIP_PEICORE) == 1
   gArmTokenSpaceGuid.PcdSkipPeiCore|TRUE
 !endif
 
 [PcdsFixedAtBuild.common]
-  gArmPlatformTokenSpaceGuid.PcdStandalone|1
   gEmbeddedTokenSpaceGuid.PcdEmbeddedPrompt|"EXYNOS4210 %"
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize|32
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0
