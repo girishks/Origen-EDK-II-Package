@@ -66,12 +66,11 @@ TimerInterruptHandler (
   )
 {
   EFI_TPL OriginalTPL;
-  UINT32 Tmp;
+  UINT32 IntStatus;
   UINT32	PWMTimerBase;
-
+  EFI_STATUS Status;
 
   PWMTimerBase=PcdGet32(PcdPWMTimerBase);
-  //DEBUG ((EFI_D_ERROR, "PWM Timer INT Occur\n"));
   //
   // DXE core uses this callback for the EFI timer tick. The DXE core uses locks
   // that raise to TPL_HIGH and then restore back to current level. Thus we need
@@ -79,10 +78,37 @@ TimerInterruptHandler (
   //
   OriginalTPL = gBS->RaiseTPL (TPL_HIGH_LEVEL);
 
-  // clear the periodic interrupt
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
-  MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET), Tmp);
-
+  // clear the  interrupt
+  IntStatus = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
+  if(IntStatus & TIMER_STATUS_MASK(TIMER_0)){
+    MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET),(IntStatus | TIMER_STATUS_MASK(TIMER_0)));
+	Status = RETURN_SUCCESS;
+    DEBUG ((EFI_D_INFO, "\nTimer 0 ISR\n"));
+  }
+  if(IntStatus & TIMER_STATUS_MASK(TIMER_1)){
+    MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET),(IntStatus | TIMER_STATUS_MASK(TIMER_1)));
+	Status = RETURN_SUCCESS;
+    DEBUG ((EFI_D_INFO, "\nTimer 1 ISR\n"));
+  }
+  if(IntStatus & TIMER_STATUS_MASK(TIMER_2)){
+    MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET),(IntStatus | TIMER_STATUS_MASK(TIMER_2)));
+	Status = RETURN_SUCCESS;
+    DEBUG ((EFI_D_INFO, "\nTimer 2 ISR\n"));
+  }
+  if(IntStatus & TIMER_STATUS_MASK(TIMER_3)){
+    MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET),(IntStatus | TIMER_STATUS_MASK(TIMER_3)));
+	Status = RETURN_SUCCESS;
+    DEBUG ((EFI_D_INFO, "\nTimer 3 ISR\n"));
+  }
+  if(IntStatus & TIMER_STATUS_MASK(TIMER_4)){
+    MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET),(IntStatus | TIMER_STATUS_MASK(TIMER_4)));
+	Status = RETURN_SUCCESS;
+    DEBUG ((EFI_D_INFO, "\nTimer 4 ISR\n"));
+  }
+  if(EFI_ERROR(Status)){
+	Status = RETURN_UNSUPPORTED;
+	ASSERT_EFI_ERROR(FALSE);
+  }
   // signal end of interrupt early to help avoid losing subsequent ticks from long duration handlers
   gInterrupt->EndOfInterrupt (gInterrupt, Source);
 
@@ -136,7 +162,7 @@ TimerDriverRegisterHandler (
     return EFI_ALREADY_STARTED;
   }
 
-  DEBUG ((EFI_D_ERROR, "++TimerDriverRegisterHandler\n"));
+  DEBUG ((EFI_D_INFO, "Handler Registered Successfully\n"));
   mTimerNotifyFunction = NotifyFunction;
 
   return EFI_SUCCESS;
@@ -157,6 +183,7 @@ ExitBootServicesEvent (
   PWMTimerBase=PcdGet32(PcdPWMTimerBase);
   // All PWM timer is off
   MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), 0);
+  DEBUG ((EFI_D_INFO, "\nTimer Exit\n"));
 }
 
 /**
@@ -196,20 +223,19 @@ TimerDriverSetTimerPeriod (
 {
   EFI_STATUS  Status;
   UINT64      TimerTicks;
-  UINT32			Tmp;
+  UINT32	  rwVal;
   UINT32	PWMTimerBase;
 
+  DEBUG ((EFI_D_INFO, "\nSetTimer called\n"));
   PWMTimerBase=PcdGet32(PcdPWMTimerBase);
   // Stop PWM timer 0
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
-  Tmp &= ~(0x1F << 0);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET) ,Tmp);
+  rwVal = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
+  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET),STOP_TIMER_VAL(TIMER_0));
 
   if (TimerPeriod == 0) {
     // leave timer disabled from above, and...
-	Tmp = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
-	Tmp &= ~(1 << 0);
-	MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET), Tmp);
+    rwVal = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
+    MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET),(rwVal & ~TIMER_INTR_MASK(TIMER_0)));
     // disable timer 0/1 interrupt for a TimerPeriod of 0
 	Status = gInterrupt->DisableInterruptSource (gInterrupt, gVector);
   } else {
@@ -223,19 +249,16 @@ TimerDriverSetTimerPeriod (
 	// PWM Timer 0 used by Period counter with Auto re-load mode
 	MmioWrite32 ((PWMTimerBase + PWM_TCNTB0_OFFSET), TimerTicks);
 	// Set and Clear PWM Manually update for Timer 0
-	Tmp = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
-	Tmp |= (0x2 << 0);
-	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-	Tmp &= ~(0x2 << 0);
-	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-	// Set Auto re-load and start Timer
-	Tmp |= (0x9 << 0);
-	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
+	rwVal = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
+	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal | UPDATE_COUNT_BUF_MASK(TIMER_0));
+	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal & ~UPDATE_COUNT_BUF_MASK(TIMER_0));
 
-	// enable PWM Timer 0 interrupts
-	Tmp = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
-	Tmp |= (1 << 0);
-	MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET), Tmp);
+	// Set Auto re-load and start Timer
+    MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal | RELOAD_AND_START(TIMER_0));
+
+    //PWM Timer0 INT enable
+    rwVal = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
+    MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET), rwVal | TIMER_INTR_MASK(TIMER_0) );
 
 	Status = gInterrupt->EnableInterruptSource (gInterrupt, gVector);
 	}
@@ -374,71 +397,24 @@ TimerInitialize (
 
   // PWM Input source clock is 100Mhz and Configure 1Mhz for PWM Timer
   Tmp = MmioRead32 (PWMTimerBase + PWM_TCFG0_OFFSET);
-  Tmp &= ~(0xFF << 0);
-  Tmp |= (0x63 << 0);
+  Tmp &= ~(0xFF << PRESCALE_GRP0_START_POS);
+  Tmp |= (PRESCALE_TIMER_GRP0 << PRESCALE_GRP0_START_POS);
   MmioWrite32 ((PWMTimerBase + PWM_TCFG0_OFFSET), Tmp);
-  MmioWrite32 ((PWMTimerBase + PWM_TCFG1_OFFSET), 0x0);
+  MmioWrite32 ((PWMTimerBase + PWM_TCFG1_OFFSET), 0);
 
-	//Timer 1 INT disable
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
-  Tmp &= ~(1 << 1);
-  MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET), Tmp);
-
-  // configure timer 1 Stop
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
-  Tmp &= ~(0xF << 8);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-
-  // PWM Timer 1 used by Free running counter with Auto re-load mode
-  MmioWrite32 ((PWMTimerBase + PWM_TCNTB1_OFFSET), 0xFFFFFFFF);
-  // Set and Clear PWM Manually update for Timer 1
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
-  Tmp |= (0x2 << 8);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-  Tmp &= ~(0x2 << 8);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-  // Set Auto re-load and start Timer
-  Tmp |= (0x9 << 8);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
+  // Disable the timer
+  Status = TimerDriverSetTimerPeriod (&gTimer, 0);
+  ASSERT_EFI_ERROR (Status);
 
   // Install interrupt handler
   gVector = PWM_TIMER0_INTERRUPT_NUM;
   Status = gInterrupt->RegisterInterruptSource (gInterrupt, gVector, TimerInterruptHandler);
   ASSERT_EFI_ERROR (Status);
 
-  // Disable the timer
-  Status = TimerDriverSetTimerPeriod (&gTimer, 0);
-  ASSERT_EFI_ERROR (Status);
-
-  // PWM Timer 0 make to stop
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
-  Tmp &= ~(0x1F << 0);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-
-  // PWM Timer 0 INT disable
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
-  Tmp &= ~(1 << 0);
-  MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET), Tmp);
-
   // PWM Timer 0 used by Period counter with Auto re-load mode
   MmioWrite32 ((PWMTimerBase + PWM_TCNTB0_OFFSET), FixedPcdGet32(PcdTimerPeriod));
   Status = TimerDriverSetTimerPeriod (&gTimer, FixedPcdGet32(PcdTimerPeriod));
   ASSERT_EFI_ERROR (Status);
-
-  // Set and Clear PWM Manually update for Timer 0
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
-  Tmp |= (0x2 << 0);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-  Tmp &= ~(0x2 << 0);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-  // Set Auto re-load and start Timer
-  Tmp |= (0x9 << 0);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-
-  //PWM Timer0 INT enable
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
-  Tmp |= (1 << 0);
-  MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET), Tmp);
 
   // Install the Timer Architectural Protocol onto a new handle
   Status = gBS->InstallMultipleProtocolInterfaces(

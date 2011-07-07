@@ -32,7 +32,7 @@ TimerConstructor (
   )
 {
   UINT32	PWMTimerBase;
-  UINT32 Tmp;
+  UINT32	rwVal;
 
   PWMTimerBase = PcdGet32(PcdPWMTimerBase);
 
@@ -42,32 +42,28 @@ TimerConstructor (
   Timer 3 = > Performance Counter
 **/
 // PWM Input Clock(ACLK_100) is 100 Mhz so We need to prescale about 1Mhz to make udelay function
-	Tmp = MmioRead32 (PWMTimerBase + PWM_TCFG0_OFFSET);
-	Tmp &= ~(0xFF << 8);
-	Tmp |= (0x63 << 8);
-	MmioWrite32 ((PWMTimerBase + PWM_TCFG0_OFFSET), Tmp);
+	rwVal = MmioRead32 (PWMTimerBase + PWM_TCFG0_OFFSET);
+	rwVal &= ~(0xFF << PRESCALE_GRP1_START_POS);
+	rwVal |= (PRESCALE_TIMER_GRP1 << PRESCALE_GRP1_START_POS);
+	MmioWrite32 ((PWMTimerBase + PWM_TCFG0_OFFSET), rwVal);
 	MmioWrite32 ((PWMTimerBase + PWM_TCFG1_OFFSET), 0x0);
 
 // PWM Timer INT disable
-	Tmp = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
-	Tmp &= ~(0x3 << 2);
-	MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET), Tmp);
+	rwVal = MmioRead32 (PWMTimerBase + PWM_TINT_CSTAT_OFFSET);
+	MmioWrite32 ((PWMTimerBase + PWM_TINT_CSTAT_OFFSET), rwVal & ~(TIMER_INTR_MASK(TIMER_2) | TIMER_INTR_MASK(TIMER_3)));
 
 // PWM Timer 2,3 make to stop
-	Tmp = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
-	Tmp &= ~(0xFF << 12);
-	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
+	rwVal = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
+	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal & (STOP_TIMER_VAL(TIMER_2) & STOP_TIMER_VAL(TIMER_3)));
 
 // PWM Timer 3 used by Free running counter with Auto re-load mode
-	MmioWrite32 ((PWMTimerBase + PWM_TCNTB3_OFFSET), 0xFFFFFFFF);
+	MmioWrite32 ((PWMTimerBase + PWM_TCNTB3_OFFSET), MAX_COUNT_VAL);
 // Set and Clear PWM Manually update for Timer 3
-	Tmp |= (0x2 << 16);
-	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-	Tmp &= ~(0x2 << 16);
-	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
+	rwVal = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
+	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal | UPDATE_COUNT_BUF_MASK(TIMER_3));
+	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal & ~UPDATE_COUNT_BUF_MASK(TIMER_3));
 // Set Auto re-load and start Timer
-	Tmp |= (0x9 << 16);
-	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
+	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal | RELOAD_AND_START(TIMER_3));
 
 	DEBUG ((EFI_D_ERROR, "Timer 2,3 Enabled\n"));
 
@@ -90,26 +86,24 @@ MicroSecondDelay (
   IN  UINTN MicroSeconds
   )
 {
-  UINT32 Tmp;
+  UINT32 rwVal;
   UINT32	PWMTimerBase;
 
   PWMTimerBase=PcdGet32(PcdPWMTimerBase);
   // load the timer count register
   MmioWrite32 ((PWMTimerBase + PWM_TCNTB2_OFFSET), MicroSeconds);
 
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
-  //Stop Timer 2
-  Tmp &= ~(0xF << 12);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-  //Set and Clear for Manually Update Counter Buffer
-  Tmp |= (0x2 << 12);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-  Tmp &= ~(0x2 << 12);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-  //Start Timer 2
-  Tmp |= (0x1 << 12);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
 
+// PWM Timer 2 stop
+  rwVal = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
+  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal & STOP_TIMER_VAL(TIMER_2));
+
+// Set and Clear PWM Manually update for Timer 2
+  rwVal = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
+  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal | UPDATE_COUNT_BUF_MASK(TIMER_2));
+  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal & ~UPDATE_COUNT_BUF_MASK(TIMER_2));
+  //Start Timer 2
+  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal | START_TIMER(TIMER_2));
   //Wait for requested delay time
   while (MmioRead32 (PWMTimerBase + PWM_TCNTO2_OFFSET) > 0) {
     ;
@@ -135,7 +129,7 @@ NanoSecondDelay (
   )
 {
   UINT32 MicroSeconds;
-  UINT32 Tmp;
+  UINT32 rwVal;
   UINT32	PWMTimerBase;
 
   PWMTimerBase=PcdGet32(PcdPWMTimerBase);
@@ -146,21 +140,19 @@ NanoSecondDelay (
   // load the timer count register
   MmioWrite32 ((PWMTimerBase + PWM_TCNTB2_OFFSET), MicroSeconds);
 
-  Tmp = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
-  //Stop Timer 2
-  Tmp &= ~(0xF << 12);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-  //Set and Clear for Manually Update Counter Buffer
-  Tmp |= (0x2 << 12);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
-  Tmp &= ~(0x2 << 12);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
+// PWM Timer 2 stop
+  rwVal = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
+  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal & STOP_TIMER_VAL(TIMER_2));
+// Set and Clear PWM Manually update for Timer 2
+  rwVal = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
+  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal | UPDATE_COUNT_BUF_MASK(TIMER_2));
+  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal & ~UPDATE_COUNT_BUF_MASK(TIMER_2));
   //Start Timer 2
-  Tmp |= (0x1 << 12);
-  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), Tmp);
+  rwVal = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
+  MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal | START_TIMER(TIMER_2));
 
   //Wait for requested delay time
-  while (MmioRead32 (PWMTimerBase + PWM_TCNTO2_OFFSET) > 0) {
+  while (MmioRead32 (PWMTimerBase + PWM_TCNTO0_OFFSET) > 0) {
     ;
   }
 

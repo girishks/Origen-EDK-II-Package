@@ -394,6 +394,7 @@ InitializeSDHC (
   SdMmcBaseAddr = PcdGet32(PcdSdMmcBase);
   // Reset Host Controller
   MmioWrite32((SdMmcBaseAddr + SDHC_SWRST_OFFSET), SRA);
+  while ((MmioRead32 ((SdMmcBaseAddr + SDHC_SWRST_OFFSET)) & SRA) != 0x0);
 
 	// Set Clock Source for using MPLL
   MmioAndThenOr32 ((CumBaseAddr + CLK_SRC_FSYS_OFFSET), ~(0xF << 8), (0x6 << 8));
@@ -475,7 +476,6 @@ PerformCardIdenfication (
   }
 
   MmioOr32 ((SdMmcBaseAddr + SDHC_SWRST_OFFSET), SRC);
-  gBS->Stall(1000);
   while ((MmioRead32 ((SdMmcBaseAddr + SDHC_SWRST_OFFSET)) & SRC));
 
   //Poll till card is busy
@@ -541,7 +541,6 @@ PerformCardIdenfication (
       break;
     }
 
-    gBS->Stall(1000);
     RetryCount++;
   }
 
@@ -587,8 +586,6 @@ PerformCardIdenfication (
   //MMC Bus setting change after card identification.
 //	MmioAndThenOr32 (SDHC_PWRCON, ~(0x7<<9), SDBV30); //check if our controller voltage is 3.0v or 3.3v //wprkfgur
   UpdateSDHCClkFrequency(400); //Set the clock frequency to 400KHz.
-
-	gBS->Stall(1000);		//Need Debug by wprkfgur
 
   return EFI_SUCCESS;
 }
@@ -906,8 +903,7 @@ DetectCard (
   }
 
   //Soft reset for all.
-	MmioWrite32((SdMmcBaseAddr + SDHC_SWRST_OFFSET), SRA);
-  gBS->Stall(1000);
+  MmioWrite32((SdMmcBaseAddr + SDHC_SWRST_OFFSET), SRA);
   while ((MmioRead32 ((SdMmcBaseAddr + SDHC_SWRST_OFFSET)) & SRA) != 0x0);
 
   //Set the clock frequency to 400KHz.

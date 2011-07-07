@@ -16,6 +16,15 @@
 #ifndef _EXYNOSTIMERLIB_H__
 #define _EXYNOSTIMERLIB_H__
 
+typedef enum{
+  TIMER_0,
+  TIMER_1,
+  TIMER_2,
+  TIMER_3,
+  TIMER_4,
+}PWM_TIMERS;
+
+#define NUM_OF_TIMERS			(0x05)
 #define PWM_TCFG0_OFFSET		(0x0000)
 #define PWM_TCFG1_OFFSET		(0x0004)
 #define PWM_TCON_OFFSET			(0x0008)
@@ -31,26 +40,26 @@
 #define PWM_TCNTB3_OFFSET		(0x0030)
 #define PWM_TCMPB3_OFFSET		(0x0034)
 #define PWM_TCNTO3_OFFSET		(0x0038)
+#define PWM_TCNTB4_OFFSET		(0x003C)
+#define PWM_TCNTO4_OFFSET		(0x0040)
 #define PWM_TINT_CSTAT_OFFSET		(0x0044)
 
-// Exynos4210 Timer constants
-#define Exynos4210_TIMER_LOAD_REG          0x00
-#define Exynos4210_TIMER_CURRENT_REG       0x04
-#define Exynos4210_TIMER_CONTROL_REG       0x08
-#define Exynos4210_TIMER_INT_CLR_REG       0x0C
-#define Exynos4210_TIMER_RAW_INT_STS_REG   0x10
-#define Exynos4210_TIMER_MSK_INT_STS_REG   0x14
-#define Exynos4210_TIMER_BG_LOAD_REG       0x18
+#define TIMER_STATUS_MASK(timer_no)		(1 << (NUM_OF_TIMERS + timer_no))
+#define TIMER_INTR_MASK(timer_no)		(1 << (timer_no))
+#define STOP_TIMER_VAL(timer_no)		 ~(0x0f << (((timer_no + 1)*(!!timer_no)) << 2))
+#define UPDATE_COUNT_BUF_MASK(timer_no)	(2 << (((timer_no + 1)*(!!timer_no)) << 2))
+#define RELOAD_AND_START(timer_no)		((AUTO_RELOAD | START_TIMERPOS) << (((timer_no + 1)*(!!timer_no)) << 2))
+#define START_TIMER(timer_no)			(START_TIMERPOS << (((timer_no + 1)*(!!timer_no)) << 2))
 
-// Timer control register bit definitions
-#define Exynos4210_TIMER_CTRL_ONESHOT        BIT0
-#define Exynos4210_TIMER_CTRL_32BIT          BIT1
-#define Exynos4210_TIMER_CTRL_PRESCALE_MASK  (BIT3|BIT2)
-#define Exynos4210_PRESCALE_DIV_1            0
-#define Exynos4210_PRESCALE_DIV_16           BIT2
-#define Exynos4210_PRESCALE_DIV_256          BIT3
-#define Exynos4210_TIMER_CTRL_INT_ENABLE     BIT5
-#define Exynos4210_TIMER_CTRL_PERIODIC       BIT6
-#define Exynos4210_TIMER_CTRL_ENABLE         BIT7
+
+#define PRESCALE_GRP0_START_POS		(0x00)
+#define PRESCALE_TIMER_GRP0			(0x63)
+#define PRESCALE_GRP1_START_POS		(0x08)
+#define PRESCALE_TIMER_GRP1			(0x63)
+#define MAX_COUNT_VAL				(0xFFFFFFFF)
+#define AUTO_RELOAD					(0x8)
+#define START_TIMERPOS				(0x1)
+
+
 
 #endif
