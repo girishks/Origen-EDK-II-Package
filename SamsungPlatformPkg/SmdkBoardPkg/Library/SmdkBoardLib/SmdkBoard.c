@@ -132,3 +132,12 @@ ArmPlatformNormalInitialize (
   ) {
 
 }
+
+VOID
+ArmPlatformSecExtraAction (
+  IN  UINTN         CoreId,
+  OUT UINTN*        JumpAddress
+  )
+{
+  *JumpAddress = PcdGet32(PcdNormalFvBaseAddress);
+}

@@ -50,4 +50,5 @@
   gArmTokenSpaceGuid.PcdNormalFdSize
   gArmTokenSpaceGuid.PcdNormalFdBaseAddress
   gArmTokenSpaceGuid.PcdL2x0ControllerBase
+  gArmTokenSpaceGuid.PcdNormalFvBaseAddress
   gExynosPkgTokenSpaceGuid.PcdTZPCBase

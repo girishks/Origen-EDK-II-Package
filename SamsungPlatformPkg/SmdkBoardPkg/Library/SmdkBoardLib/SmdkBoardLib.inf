@@ -47,5 +47,6 @@
   gArmTokenSpaceGuid.PcdSystemMemoryBase
   gArmTokenSpaceGuid.PcdSystemMemorySize
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize
+  gArmTokenSpaceGuid.PcdNormalFvBaseAddress
 #  gArmPlatformTokenSpaceGuid.PcdSystemMemoryFixRegionSize
   gExynosPkgTokenSpaceGuid.PcdTZPCBase
