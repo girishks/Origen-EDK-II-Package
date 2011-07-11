@@ -66,7 +66,7 @@
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
-[Pcd]
+[FixedPcd]
   gExynosPkgTokenSpaceGuid.PcdCmuBase
   gExynosPkgTokenSpaceGuid.PcdPmuBase
   gExynosPkgTokenSpaceGuid.PcdSysBase

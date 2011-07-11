@@ -41,7 +41,7 @@
   gEfiDevicePathProtocolGuid
   gSamsungPlatformGpioProtocolGuid			## GPIO Protocol
 
-[Pcd]
+[FixedPcd]
   gExynosPkgTokenSpaceGuid.PcdCmuBase
   gExynosPkgTokenSpaceGuid.PcdSdMmcBase
 
