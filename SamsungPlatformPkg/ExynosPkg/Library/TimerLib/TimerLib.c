@@ -54,7 +54,7 @@ TimerConstructor (
 
 // PWM Timer 2,3 make to stop
 	rwVal = MmioRead32 (PWMTimerBase + PWM_TCON_OFFSET);
-	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal & (STOP_TIMER_VAL(TIMER_2) & STOP_TIMER_VAL(TIMER_3)));
+	MmioWrite32 ((PWMTimerBase + PWM_TCON_OFFSET), rwVal & (STOP_TIMER_VAL(TIMER_2) | STOP_TIMER_VAL(TIMER_3)));
 
 // PWM Timer 3 used by Free running counter with Auto re-load mode
 	MmioWrite32 ((PWMTimerBase + PWM_TCNTB3_OFFSET), MAX_COUNT_VAL);
