@@ -106,6 +106,15 @@
   # ARM PL390 General Interrupt Driver in Secure and Non-secure
   PL390GicSecLib|ArmPkg/Drivers/PL390Gic/PL390GicSec.inf
   PL390GicNonSecLib|ArmPkg/Drivers/PL390Gic/PL390GicNonSec.inf
+  PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
+  ExtractGuidedSectionLib|EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.inf
+  LzmaDecompressLib|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+  MemoryAllocationLib|EmbeddedPkg/Library/PrePiMemoryAllocationLib/PrePiMemoryAllocationLib.inf
+  HobLib|EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
+  PrePiHobListPointerLib|ArmPlatformPkg/Library/PrePiHobListPointerLib/PrePiHobListPointerLib.inf
+  PerformanceLib|MdeModulePkg/Library/PeiPerformanceLib/PeiPerformanceLib.inf
+  PlatformPeiLib|ArmPlatformPkg/PlatformPei/PlatformPeiLib.inf
+  MemoryInitPeiLib|ArmPlatformPkg/MemoryInitPei/MemoryInitPeiLib.inf
 
 [LibraryClasses.common.PEI_CORE]
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
@@ -298,11 +307,11 @@
   gArmPlatformTokenSpaceGuid.PcdCPUCoresSecMonStackBase|0x4A000000  # Top of SEC Stack for Monitor World
   gArmPlatformTokenSpaceGuid.PcdCPUCoreSecMonStackSize|0x2000		    # Stack for each of the 4 CPU cores
   # Stacks for MPCores in Normal World
-  gArmPlatformTokenSpaceGuid.PcdCPUCoresNonSecStackBase|0x48000000	# Top of SEC Stack for Normal World
+  gArmPlatformTokenSpaceGuid.PcdCPUCoresNonSecStackBase|0xBFFE0000	# Top of SEC Stack for Normal World
   gArmPlatformTokenSpaceGuid.PcdCPUCoresNonSecStackSize|0x20000	# Stack for each of the 4 CPU cores
   gArmPlatformTokenSpaceGuid.PcdPeiServicePtrAddr|0x48020004        # Pei Services Ptr just above stack
   # Non Sec UEFI Firmware: These two PCDs must match PcdFlashFvMainBase/PcdFlashFvMainSize
-  gArmTokenSpaceGuid.PcdNormalFdBaseAddress |0x43E10000       # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainBase
+  gArmTokenSpaceGuid.PcdNormalFdBaseAddress |0x43E00000       # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainBase
   gArmTokenSpaceGuid.PcdNormalFdSize|0x00100000              # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainSize
   gEmbeddedTokenSpaceGuid.PcdTimerPeriod|100000        # expressed in 100ns units, 100,000 x 100 ns = 10,000,000 ns = 10 ms
   gArmTokenSpaceGuid.PcdSystemMemoryBase|0x40000000
@@ -365,27 +374,10 @@
 #
 ################################################################################
 [Components.common]
-#
-# SEC
-#
-  ArmPlatformPkg/Sec/Sec.inf
-  ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-#
-# PEI Phase modules
-#
-  MdeModulePkg/Core/Pei/PeiMain.inf
-  MdeModulePkg/Universal/PCD/Pei/Pcd.inf  {
-    <LibraryClasses>
-      PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
-  }
-  ArmPlatformPkg/PlatformPei/PlatformPeim.inf
-  ArmPlatformPkg/MemoryInitPei/MemoryInitPeim.inf
-  IntelFrameworkModulePkg/Universal/StatusCode/Pei/StatusCodePei.inf
-  Nt32Pkg/BootModePei/BootModePei.inf
-  MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
-  MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf {
-    <LibraryClasses>
-      NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+  ArmPlatformPkg/PrePi/PeiMPCore.inf {
+     <LibraryClasses>
+       ArmLib|ArmPkg/Library/ArmLib/ArmV7/ArmV7MPCoreLib.inf
+       ArmPlatformLib|SamsungPlatformPkg/SmdkBoardPkg/Library/SmdkBoardLib/SmdkBoardLib.inf
   }
 #
 # DXE
