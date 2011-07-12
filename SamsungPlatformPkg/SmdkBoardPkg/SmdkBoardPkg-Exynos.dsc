@@ -28,7 +28,7 @@
   FLASH_DEFINITION               = SamsungPlatformPkg/SmdkBoardPkg/SmdkBoardPkg-Exynos.fdf
 
 [LibraryClasses.common]
-!if $(BUILD_TARGETS) == RELEASE
+!if $(TARGET) == RELEASE
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
   UncachedMemoryAllocationLib|ArmPkg/Library/UncachedMemoryAllocationLib/UncachedMemoryAllocationLib.inf
 !else
@@ -40,44 +40,33 @@
   ArmLib|ArmPkg/Library/ArmLib/ArmV7/ArmV7MPCoreLib.inf
   ArmPlatformLib|SamsungPlatformPkg/SmdkBoardPkg/Library/SmdkBoardLib/SmdkBoardLib.inf
   ArmMPCoreMailBoxLib|ArmPkg/Library/ArmMPCoreMailBoxLib/ArmMPCoreMailBoxLib.inf
-
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
   BaseMemoryLib|ArmPkg/Library/BaseMemoryLibStm/BaseMemoryLibStm.inf
-
   EfiResetSystemLib|SamsungPlatformPkg/ExynosPkg/Library/ResetSystemLib/ResetSystemLib.inf
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
-
   EblCmdLib|ArmPlatformPkg/Library/EblCmdLib/EblCmdLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-
   #
   # Uncomment (and comment out the next line) For RealView Debugger. The Standard IO window
   # in the debugger will show load and unload commands for symbols. You can cut and paste this
   # into the command window to load symbols. We should be able to use a script to do this, but
   # the version of RVD I have does not support scripts accessing system memory.
   #
-#  PeCoffExtraActionLib|ArmPkg/Library/RvdPeCoffExtraActionLib/RvdPeCoffExtraActionLib.inf
   PeCoffExtraActionLib|ArmPkg/Library/DebugPeCoffExtraActionLib/DebugPeCoffExtraActionLib.inf
-#  PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
-
   CacheMaintenanceLib|ArmPkg/Library/ArmCacheMaintenanceLib/ArmCacheMaintenanceLib.inf
   DefaultExceptioHandlerLib|ArmPkg/Library/DefaultExceptionHandlerLib/DefaultExceptionHandlerLib.inf
-
   SemihostLib|ArmPkg/Library/SemihostLib/SemihostLib.inf
   RealTimeClockLib|EmbeddedPkg/Library/TemplateRealTimeClockLib/TemplateRealTimeClockLib.inf
   IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
-
   UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
   PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
-
   UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
   DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
   UefiBootServicesTableLib|MdePkg/Library/UefiBootServicesTableLib/UefiBootServicesTableLib.inf
-
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   UefiDriverEntryPoint|MdePkg/Library/UefiDriverEntryPoint/UefiDriverEntryPoint.inf
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
@@ -86,32 +75,19 @@
 # Assume everything is fixed at build
 #
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
-
   UefiRuntimeLib|MdePkg/Library/UefiRuntimeLib/UefiRuntimeLib.inf
-
   EblAddExternalCommandLib|EmbeddedPkg/Library/EblAddExternalCommandLib/EblAddExternalCommandLib.inf
-
   CpuLib|MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-
   EblNetworkLib|EmbeddedPkg/Library/EblNetworkLib/EblNetworkLib.inf
-
   ArmDisassemblerLib|ArmPkg/Library/ArmDisassemblerLib/ArmDisassemblerLib.inf
   DebugAgentLib|MdeModulePkg/Library/DebugAgentLibNull/DebugAgentLibNull.inf
   DebugAgentTimerLib|SamsungPlatformPkg/SmdkBoardPkg/Library/DebugAgentTimerLib/DebugAgentTimerLib.inf
-
-  #SerialPortLib|ArmPlatformPkg/Library/PL011SerialPortLib/PL011SerialPortLib.inf
   SerialPortLib|SamsungPlatformPkg/ExynosPkg/Library/SerialPortLib/SerialPortLib.inf
   TimerLib|SamsungPlatformPkg/ExynosPkg/Library/TimerLib/TimerLib.inf
-
-  # Samsung specific
- # TempLib|ArmPlatformPkg/Library/SamsungTempLib/SamsungTempLib.inf
-
   GdbSerialLib|SamsungPlatformPkg/ExynosPkg/Library/GdbSerialLib/GdbSerialLib.inf
   DmaLib|ArmPkg/Library/ArmDmaLib/ArmDmaLib.inf
-
   BdsLib|ArmPkg/Library/BdsLib/BdsLib.inf
-
   # iky for usb host
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
@@ -121,13 +97,10 @@
   ArmLib|ArmPkg/Library/ArmLib/ArmV7/ArmV7MPCoreLibSec.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   ArmPlatformLib|SamsungPlatformPkg/SmdkBoardPkg/Library/SmdkBoardLib/SmdkBoardSecLib.inf
-
   # 1/123 faster than Stm or Vstm version
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
-
   # Uncomment to turn on GDB stub in SEC.
   #DebugAgentLib|EmbeddedPkg/Library/GdbDebugAgent/GdbDebugAgent.inf
-
   # L2 Cache Driver
   L2X0CacheLib|ArmPlatformPkg/Drivers/PL310L2Cache/PL310L2CacheSec.inf
   # ARM PL390 General Interrupt Driver in Secure and Non-secure
@@ -179,7 +152,6 @@
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
   UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
-
   PerformanceLib|MdeModulePkg/Library/DxeCorePerformanceLib/DxeCorePerformanceLib.inf
 
 
@@ -189,7 +161,6 @@
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   PerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
-#  ExynosLib|SamsungPlatformPkg/ExynosPkg/Library/ExynosLib/ExynosLib.inf
 
 [LibraryClasses.common.UEFI_APPLICATION]
   ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
@@ -209,7 +180,6 @@
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
-#  PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
 
 [LibraryClasses.ARM]
@@ -249,12 +219,9 @@
   gEfiMdePkgTokenSpaceGuid.PcdDriverDiagnostics2Disable|TRUE
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport|FALSE
   gEmbeddedTokenSpaceGuid.PcdCacheEnable|TRUE
-
   # Use the Vector Table location in CpuDxe. We will not copy the Vector Table at PcdCpuVectorBaseAddress
   gArmTokenSpaceGuid.PcdRelocateVectorTable|FALSE
-
   gArmTokenSpaceGuid.PcdCpuDxeProduceDebugSupport|FALSE
-
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
   gArmPlatformTokenSpaceGuid.PcdStandalone|TRUE
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryInitializeInSec|TRUE
@@ -262,9 +229,10 @@
 !if $(EDK2_SKIP_PEICORE) == 1
   gArmTokenSpaceGuid.PcdSkipPeiCore|TRUE
 !endif
+   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutGopSupport|TRUE
 
 [PcdsFixedAtBuild.common]
-  gEmbeddedTokenSpaceGuid.PcdEmbeddedPrompt|"EXYNOS4210 %"
+  gEmbeddedTokenSpaceGuid.PcdEmbeddedPrompt|"SMDK4210#"
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuMemorySize|32
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|0
   gEfiMdePkgTokenSpaceGuid.PcdMaximumUnicodeStringLength|1000000
@@ -320,32 +288,25 @@
 # but not used).
 #
   gArmTokenSpaceGuid.PcdCpuVectorBaseAddress|0x00000000
-
   gArmPlatformTokenSpaceGuid.PcdMPCoreSupport|1
-
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize|0x01000000
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryFixRegionSize|0x00800000
   # Stacks for MPCores in Secure World
   gArmPlatformTokenSpaceGuid.PcdCPUCoresSecStackBase|0x4B000000     # Top of SEC Stack for Secure World
   gArmPlatformTokenSpaceGuid.PcdCPUCoreSecStackSize|0x2000		      # Stack for each of the 4 CPU cores
-
   # Stacks for MPCores in Monitor Mode
   gArmPlatformTokenSpaceGuid.PcdCPUCoresSecMonStackBase|0x4A000000  # Top of SEC Stack for Monitor World
   gArmPlatformTokenSpaceGuid.PcdCPUCoreSecMonStackSize|0x2000		    # Stack for each of the 4 CPU cores
-
   # Stacks for MPCores in Normal World
   gArmPlatformTokenSpaceGuid.PcdCPUCoresNonSecStackBase|0x48000000	# Top of SEC Stack for Normal World
   gArmPlatformTokenSpaceGuid.PcdCPUCoresNonSecStackSize|0x20000	# Stack for each of the 4 CPU cores
   gArmPlatformTokenSpaceGuid.PcdPeiServicePtrAddr|0x48020004        # Pei Services Ptr just above stack
-
   # Non Sec UEFI Firmware: These two PCDs must match PcdFlashFvMainBase/PcdFlashFvMainSize
   gArmTokenSpaceGuid.PcdNormalFdBaseAddress |0x43E10000       # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainBase
   gArmTokenSpaceGuid.PcdNormalFdSize|0x00100000              # Must be equal to gEmbeddedTokenSpaceGuid.PcdFlashFvMainSize
-
   gEmbeddedTokenSpaceGuid.PcdTimerPeriod|100000        # expressed in 100ns units, 100,000 x 100 ns = 10,000,000 ns = 10 ms
   gArmTokenSpaceGuid.PcdSystemMemoryBase|0x40000000
   gArmTokenSpaceGuid.PcdSystemMemorySize|0x80000000
-
  #
   # ARM Pcds
   #
@@ -383,11 +344,9 @@
   gArmPlatformTokenSpaceGuid.PcdFirmwareVendor|L"Samsung Exynos4210-SMDK Board"
 
 # Use the Serial console (ConIn & ConOut) and the Graphic driver (ConOut)
-  gArmPlatformTokenSpaceGuid.PcdDefaultConOutPaths|L"VenHw(6696936D-3637-467C-87CB-14EA8248948C)/Uart(115200,8,N,1)"
-  gArmPlatformTokenSpaceGuid.PcdDefaultConInPaths|L"VenHw(6696936D-3637-467C-87CB-14EA8248948C)/Uart(115200,8,N,1)"
+  gArmPlatformTokenSpaceGuid.PcdDefaultConOutPaths|L"VenHw(D3987D4B-971A-435F-8CAF-4967EB627241)/Uart(115200,8,N,1)/VenPcAnsi();VenHw(c5deae31-fad2-4030-841b-cfc9644d2c5b)"
+  gArmPlatformTokenSpaceGuid.PcdDefaultConInPaths|L"VenHw(D3987D4B-971A-435F-8CAF-4967EB627241)/Uart(115200,8,N,1)/VenPcAnsi()"
   gArmPlatformTokenSpaceGuid.PcdPlatformBootTimeOut|10
-
-
   #
   # ARM L2x0 PCDs
   #
@@ -400,21 +359,17 @@
   gArmTokenSpaceGuid.PcdMPCoreMailboxGetAddress|0x10000030
   gArmTokenSpaceGuid.PcdMPCoreMailboxClearAddress|0x10000034
   gArmTokenSpaceGuid.PcdMPCoreMailboxClearValue|0xFFFFFFFF
-
-
 ################################################################################
 #
 # Components Section - list of all EDK II Modules needed by this Platform
 #
 ################################################################################
 [Components.common]
-
 #
 # SEC
 #
   ArmPlatformPkg/Sec/Sec.inf
   ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-
 #
 # PEI Phase modules
 #
@@ -432,7 +387,6 @@
     <LibraryClasses>
       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
-
 #
 # DXE
 #
@@ -441,7 +395,6 @@
       PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
       NULL|MdeModulePkg/Library/DxeCrc32GuidedSectionExtractLib/DxeCrc32GuidedSectionExtractLib.inf
   }
-
   #
   # Architectural Protocols
   #
@@ -452,18 +405,16 @@
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
   EmbeddedPkg/EmbeddedMonotonicCounter/EmbeddedMonotonicCounter.inf
-  #MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
-  #MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
-
+  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
+  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+  EmbeddedPkg/SerialDxe/SerialDxe.inf
+  SamsungPlatformPkg/ExynosPkg/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
   EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
   EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
-
   EmbeddedPkg/SimpleTextInOutSerial/SimpleTextInOutSerial.inf
-
   SamsungPlatformPkg/SmdkBoardPkg/FvbDxe/FvbDxe.inf
   SamsungPlatformPkg/ExynosPkg/TimerDxe/TimerDxe.inf
-
   #
   # ACPI Support
   #
@@ -471,11 +422,8 @@
   #
   # Samsung specific Driver
   #
-  #ArmPlatformPkg/Drivers/SamsungTempDxe/SamsungTempDxe.inf
   ArmPkg/Drivers/PL390Gic/PL390GicDxe.inf
-  #SamsungPlatformPkg/ExynosPkg/InterruptDxe/InterruptDxe.inf
   SamsungPlatformPkg/ExynosPkg/SDHCDxe/SDHCDxe.inf
-  #ArmPlatformPkg/Drivers/Exynos4210DisplayDxe/Exynos4210DisplayDxe.inf
   SamsungPlatformPkg/ExynosPkg/Gpio/Gpio.inf{
     <LibraryClasses>
        ExynosLib|SamsungPlatformPkg/ExynosPkg/Library/ExynosLib/ExynosLib.inf
@@ -492,25 +440,13 @@
   MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
   FatPkg/EnhancedFatDxe/Fat.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
-
-
   #
   # Application
   #
   EmbeddedPkg/Ebl/Ebl.inf
-
   #
   # Bds
   #
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   ArmPlatformPkg/Bds/Bds.inf
-
-  #
-  # usb host
-  #
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
-
-  #
-  # usb host : ehci + bus + pci_emul + mass_storage
-  #
-  SamsungPlatformPkg/ExynosPkg/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
