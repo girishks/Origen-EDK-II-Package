@@ -49,11 +49,7 @@ NumBlocks     = 0x20
 #
 ################################################################################
 
-0x0000000|0x00010000
-gArmTokenSpaceGuid.PcdSecureFvBaseAddress|gArmTokenSpaceGuid.PcdSecureFvBaseSize
-FV = FVMAIN_SEC
-
-0x00010000|0x00100000
+0x00000000|0x00100000
 gArmTokenSpaceGuid.PcdNormalFvBaseAddress|gArmTokenSpaceGuid.PcdNormalFvSize
 FV = FVMAIN_COMPACT
 
@@ -101,27 +97,6 @@ DATA = {
 # module statements.
 #
 ################################################################################
-
-[FV.FVMAIN_SEC]
-FvAlignment        = 8
-ERASE_POLARITY     = 1
-MEMORY_MAPPED      = TRUE
-STICKY_WRITE       = TRUE
-LOCK_CAP           = TRUE
-LOCK_STATUS        = TRUE
-WRITE_DISABLED_CAP = TRUE
-WRITE_ENABLED_CAP  = TRUE
-WRITE_STATUS       = TRUE
-WRITE_LOCK_CAP     = TRUE
-WRITE_LOCK_STATUS  = TRUE
-READ_DISABLED_CAP  = TRUE
-READ_ENABLED_CAP   = TRUE
-READ_STATUS        = TRUE
-READ_LOCK_CAP      = TRUE
-READ_LOCK_STATUS   = TRUE
-
-  INF ArmPlatformPkg/Sec/Sec.inf
-
 
 [FV.FVMAIN]
 BlockSize          = 0x40
@@ -198,15 +173,7 @@ READ_STATUS        = TRUE
 READ_LOCK_CAP      = TRUE
 READ_LOCK_STATUS   = TRUE
 
-  INF ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf
-  INF MdeModulePkg/Core/Pei/PeiMain.inf
-  INF ArmPlatformPkg/PlatformPei/PlatformPeim.inf
-  INF ArmPlatformPkg/MemoryInitPei/MemoryInitPeim.inf
-  INF MdeModulePkg/Universal/PCD/Pei/Pcd.inf
-  INF IntelFrameworkModulePkg/Universal/StatusCode/Pei/StatusCodePei.inf
-  INF MdeModulePkg/Universal/Variable/Pei/VariablePei.inf
-  INF MdeModulePkg/Core/DxeIplPeim/DxeIpl.inf
-
+  INF ArmPlatformPkg/PrePi/PeiMPCore.inf
   FILE FV_IMAGE = 9E21FD93-9C72-4c15-8C4B-E77F1DB2D792 {
     SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
       SECTION FV_IMAGE = FVMAIN
