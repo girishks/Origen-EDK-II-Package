@@ -33,9 +33,9 @@
   SamsungPlatformPkg/ExynosPkg/ExynosPkg.dec
 
 [LibraryClasses]
-  #DebugLib
-  #IoLib
-  #BaseLib
+  DebugLib
+  IoLib
+  BaseLib
 
 [Pcd.common]
   gExynosPkgTokenSpaceGuid.PcdPWMTimerBase

@@ -415,7 +415,6 @@ DisplayBlt(
   IN  UINTN                                   Delta         OPTIONAL
   )
 {
-  EFI_STATUS Status=EFI_SUCCESS;
   UINT8 *VidBuf, *BltBuf, *VidBuf1;
   UINTN i, j;
 
