@@ -1,15 +1,14 @@
-//
-//  Copyright (c) 2011, Samsung Electronics Co. All rights reserved.
-//
-//  This program and the accompanying materials
-//  are licensed and made available under the terms and conditions of the BSD License
-//  which accompanies this distribution.  The full text of the license may be found at
-//  http://opensource.org/licenses/bsd-license.php
-//
-//  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
-//
-//
+/*
+ * Copyright (c) 2011, Samsung Electronics Co. All rights reserved.
+ *
+ * This program and the accompanying materials
+ * are licensed and made available under the terms and conditions of the BSD License
+ * which accompanies this distribution.  The full text of the license may be found at
+ * http://opensource.org/licenses/bsd-license.php
+ *
+ * THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+ */
 
 #include <AsmMacroIoLib.h>
 #include <Base.h>
@@ -17,15 +16,17 @@
 #include <Platform/ArmPlatform.h>
 #include <AutoGen.h>
 
-#Start of Code section
+/* Start of Code section */
 .text
 .align 3
 
+GCC_ASM_IMPORT(_SetupPrimaryCoreStack)
 GCC_ASM_EXPORT(ArmPlatformTZPCInitialized)
 GCC_ASM_EXPORT(ArmPlatformUARTInitialized)
 GCC_ASM_EXPORT(ArmPlatformIsClockInitialized)
 GCC_ASM_EXPORT(ArmPlatformIsMemoryInitialized)
 GCC_ASM_EXPORT(ArmPlatformInitializeBootMemory)
+GCC_ASM_EXPORT(ArmPlatformSecBootAction)
 
 ASM_PFX(ArmPlatformTZPCInitialized):
         ldr     r0, =Exynos4210_TZPC0_BASE
@@ -330,48 +331,71 @@ cmu_11:
 
         bx              lr
 
-/**
-  Called at the early stage of the Boot phase to know if the memory has already been initialized
-  Running the code from the reset vector does not mean we start from cold boot. In some case, we
-  can go through this code with the memory already initialized.
-  Because this function is called at the early stage, the implementation must not use the stack.
-  Its implementation must probably done in assembly to ensure this requirement.
+/*
+ * Call at the beginning of the platform boot up
+ *
+ * This function allows the firmware platform to do extra actions at the early
+ * stage of the platform power up.
+ *
+ * Note: This function must be implemented in assembler
+ *	 as there is no stack set up yet
+ */
+ASM_PFX(ArmPlatformSecBootAction):
+	 bx    lr
 
-  @return   Return the condition value into the 'Z' flag
-
-**/
+/*
+ * Called at the early stage of the Boot phase to know if the memory has
+ * already been initialized. Running the code from the reset vector does
+ * not mean we start from cold boot. In some case, we can go through this
+ * code with the memory already initialized.
+ * Because this function is called at the early stage, the implementation
+ * must not use the stack. Its implementation must probably done in
+ * assembly to ensure this requirement.
+ *
+ * @return   Return the condition value into the 'Z' flag
+ */
 ASM_PFX(ArmPlatformIsMemoryInitialized):
-  // Check if the memory has been already mapped, if so skipped the memory initialization
+ /*
+  * Check if the memory has been already mapped,
+  * if so skipped the memory initialization
+  */
 	LoadConstantToReg (Exynos4210_DMC_0_BASE, r0)
 	ldr   r0, [r0, #0]
         and   r0, r0, #0x20
-        cmp   r0, #0x00 //the SecEntry.S code is common for all Arm platforms. so compare is reversed to set necessary flags
+        cmp   r0, #0x00
 	bx	lr
 
-/**
-  Initialize the memory where the initial stacks will reside
-
-  This memory can contain the initial stacks (Secure and Secure Monitor stacks).
-  In some platform, this region is already initialized and the implementation of this function can
-  do nothing. This memory can also represent the Secure RAM.
-  This function is called before the satck has been set up. Its implementation must ensure the stack
-  pointer is not used (probably required to use assembly language)
-
-**/
+/*
+ * Initialize the memory where the initial stacks will reside
+ *
+ * This memory can contain the initial stacks (Secure and Secure Monitor
+ * stacks). In some platform, this region is already initialized and the
+ * implementation of this function can do nothing. This memory can also
+ * represent the Secure RAM.
+ * This function is called before the satck has been set up. Its
+ * implementation must ensure the stack pointer is not used (probably
+ * required to use assembly language)
+ */
 ASM_PFX(ArmPlatformInitializeBootMemory):
-  // The SMC does not need to be initialized for RTSM
-//Async bridge configuration at CPU_core(1: half_sync 0: full_sync)
-        ldr r0, =0x10010350
+/*
+ * Check if the Memory is already Initialized.
+ * If Initialized goto Stack setup
+ */
+	mov r10, lr
+	bl   ASM_PFX(ArmPlatformIsMemoryInitialized)
+	bne  skip_initmem
+
+	ldr r0, =0x10010350
         mov r1, #1
         str r1, [r0]
 
-//CLK_DIV_DMC0 on iROM DMC=50MHz for Init DMC
+/* CLK_DIV_DMC0 on iROM DMC=50MHz for Init DMC */
         ldr     r0, =Exynos4210_CMU_BASE
         ldr     r1, =0x13113113
         ldr     r2, =Exynos4210_CMU_DIV_DMC0
         str     r1, [r0, r2]
 
-//MIU Setting
+/* MIU Setting */
         ldr     r0, =Exynos4210_MIU_BASE
 
         ldr     r1, =0x20001507
@@ -469,8 +493,8 @@ loop_5:
         str     r1, [r0, #DMC_DIRECTCMD]
         ldr     r1, =0x00000C08
         str     r1, [r0, #DMC_DIRECTCMD]
-#if 1
-//get DMC density information
+
+/* get DMC density information */
         ldr r1, =0x09010000
         mov r3, #10
 loop_6:
@@ -488,7 +512,6 @@ loop_7:
         ldreq r1, =0x20e01323
         ldrne r1, =0x20f01223
         str     r1, [r0, #DMC_MEMCONFIG0]
-#endif
 
 /*****************************************************************/
 /*DREX1***********************************************************/
@@ -511,7 +534,7 @@ loop_7:
 
         ldr     r1, =0x0000008C
         str     r1, [r0, #DMC_PHYCONTROL1]
-       ldr     r1, =0x00000084
+        ldr     r1, =0x00000084
         str     r1, [r0, #DMC_PHYCONTROL1]
 
         ldr     r1, =0x0000008C
@@ -582,8 +605,7 @@ loop_11:
         ldr     r1, =0x00000C08
         str     r1, [r0, #DMC_DIRECTCMD]
 
-#if 1
-// get DMC density information
+/* get DMC density information */
         ldr r1, =0x09010000
         mov r3, #10
 loop_12:
@@ -601,8 +623,8 @@ loop_13:
         ldreq r1, =0x20e01323
         ldrne r1, =0x20f01223
         str     r1, [r0, #DMC_MEMCONFIG0]
-#endif
-
-	 bx    lr
+skip_initmem:
+	mov lr, r10
+	bx    lr
 
 .end
