@@ -42,11 +42,8 @@
   gEmbeddedTokenSpaceGuid.PcdCacheEnable
   gArmPlatformTokenSpaceGuid.PcdStandalone
 [FixedPcd]
-  gArmTokenSpaceGuid.PcdNormalFdSize
-  gArmTokenSpaceGuid.PcdNormalFdBaseAddress
+  gArmTokenSpaceGuid.PcdFvBaseAddress
   gArmTokenSpaceGuid.PcdSystemMemoryBase
   gArmTokenSpaceGuid.PcdSystemMemorySize
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize
-  gArmTokenSpaceGuid.PcdNormalFvBaseAddress
-#  gArmPlatformTokenSpaceGuid.PcdSystemMemoryFixRegionSize
   gExynosPkgTokenSpaceGuid.PcdTZPCBase
