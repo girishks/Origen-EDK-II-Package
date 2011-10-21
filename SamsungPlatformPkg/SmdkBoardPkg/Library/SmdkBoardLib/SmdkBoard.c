@@ -18,7 +18,30 @@
 #include <Library/PcdLib.h>
 #include <Drivers/PL341Dmc.h>
 #include <Platform/ArmPlatform.h>
+#include <Ppi/ArmMpCoreInfo.h>
 
+ARM_CORE_INFO mExynosMpCoreInfo[] = {
+  {
+    // Cluster 0, Core 0
+    0x0, 0x0,
+
+    // MP Core MailBox Set/Get/Clear Addresses and Clear Value
+    (EFI_PHYSICAL_ADDRESS)ARM_EB_SYS_FLAGS_REG,
+    (EFI_PHYSICAL_ADDRESS)ARM_EB_SYS_FLAGS_SET_REG,
+    (EFI_PHYSICAL_ADDRESS)ARM_EB_SYS_FLAGS_CLR_REG,
+    (UINT64)0xFFFFFFFF
+  },
+  {
+    // Cluster 0, Core 1
+    0x0, 0x1,
+
+    // MP Core MailBox Set/Get/Clear Addresses and Clear Value
+    (EFI_PHYSICAL_ADDRESS)ARM_EB_SYS_FLAGS_REG,
+    (EFI_PHYSICAL_ADDRESS)ARM_EB_SYS_FLAGS_SET_REG,
+    (EFI_PHYSICAL_ADDRESS)ARM_EB_SYS_FLAGS_CLR_REG,
+    (UINT64)0xFFFFFFFF
+  }
+};
 /**
   Return if Trustzone is supported by your platform
 
@@ -139,5 +162,39 @@ ArmPlatformSecExtraAction (
   OUT UINTN*        JumpAddress
   )
 {
-  *JumpAddress = PcdGet32(PcdNormalFvBaseAddress);
+  *JumpAddress = PcdGet32(PcdFvBaseAddress);
+}
+
+EFI_STATUS
+PrePeiCoreGetMpCoreInfo (
+  OUT UINTN                   *CoreCount,
+  OUT ARM_CORE_INFO           **ArmCoreTable
+  )
+{
+  *CoreCount    = sizeof(mExynosMpCoreInfo) / sizeof(ARM_CORE_INFO);
+  *ArmCoreTable = mExynosMpCoreInfo;
+
+  return EFI_SUCCESS;
+}
+
+// Needs to be declared in the file. Otherwise gArmMpCoreInfoPpiGuid is undefined in the contect of PrePeiCore
+EFI_GUID mArmMpCoreInfoPpiGuid = ARM_MP_CORE_INFO_PPI_GUID;
+ARM_MP_CORE_INFO_PPI mMpCoreInfoPpi = { PrePeiCoreGetMpCoreInfo };
+
+EFI_PEI_PPI_DESCRIPTOR      gPlatformPpiTable[] = {
+  {
+    EFI_PEI_PPI_DESCRIPTOR_PPI,
+    &mArmMpCoreInfoPpiGuid,
+    &mMpCoreInfoPpi
+  }
+};
+
+VOID
+ArmPlatformGetPlatformPpiList (
+  OUT UINTN                   *PpiListSize,
+  OUT EFI_PEI_PPI_DESCRIPTOR  **PpiList
+  )
+{
+  *PpiListSize = sizeof(gPlatformPpiTable);
+  *PpiList = gPlatformPpiTable;
 }

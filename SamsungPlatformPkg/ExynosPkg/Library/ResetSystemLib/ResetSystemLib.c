@@ -128,7 +128,7 @@ LibResetSystem (
     //Perform warm reset of the system by jumping to the begining of the FV
 //    StartOfFv = (ptrImageStart)(UINTN)PcdGet32(PcdFlashFvMainBase);
 //    StartOfFv ();PcdNormalFvBaseAddress
-	((ptrImageStart)PcdGet32(PcdNormalFvBaseAddress))();
+	((ptrImageStart)PcdGet32(PcdFvBaseAddress))();
 	//((ptrImageStart)PcdGet32(PcdFlashFvMainBase))();
     break;
   case EfiResetCold:

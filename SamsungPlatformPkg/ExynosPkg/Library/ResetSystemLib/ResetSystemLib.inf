@@ -37,6 +37,7 @@
   MemoryAllocationLib
   ArmLib
   CacheMaintenanceLib
+[FixedPcd]
+  gArmTokenSpaceGuid.PcdFvBaseAddress
 [Pcd]
-  gArmTokenSpaceGuid.PcdNormalFvBaseAddress
   gExynosPkgTokenSpaceGuid.PcdPmuBase

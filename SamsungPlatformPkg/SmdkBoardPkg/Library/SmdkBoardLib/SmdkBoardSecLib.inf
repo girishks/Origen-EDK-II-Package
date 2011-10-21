@@ -45,10 +45,6 @@
   gArmPlatformTokenSpaceGuid.PcdStandalone
 
 [FixedPcd]
-  #gEmbeddedTokenSpaceGuid.PcdEmbeddedFdBaseAddress
-  #gEmbeddedTokenSpaceGuid.PcdEmbeddedFdSize
-  gArmTokenSpaceGuid.PcdNormalFdSize
-  gArmTokenSpaceGuid.PcdNormalFdBaseAddress
+  gArmTokenSpaceGuid.PcdFvBaseAddress
   gArmTokenSpaceGuid.PcdL2x0ControllerBase
-  gArmTokenSpaceGuid.PcdNormalFvBaseAddress
   gExynosPkgTokenSpaceGuid.PcdTZPCBase
