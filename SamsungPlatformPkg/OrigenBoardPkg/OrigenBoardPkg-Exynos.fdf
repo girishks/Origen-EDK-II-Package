@@ -154,8 +154,12 @@ READ_LOCK_STATUS   = TRUE
   INF MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
   INF MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   INF MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
- # INF MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
- # INF MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+
+  INF MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
+  INF MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+  INF MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  INF MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+  INF EmbeddedPkg/SerialDxe/SerialDxe.inf
 
 
   INF EmbeddedPkg/EmbeddedMonotonicCounter/EmbeddedMonotonicCounter.inf
@@ -163,10 +167,7 @@ READ_LOCK_STATUS   = TRUE
   INF EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
   INF EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
 
-  INF EmbeddedPkg/SimpleTextInOutSerial/SimpleTextInOutSerial.inf
-
   INF   ArmPkg/Drivers/PL390Gic/PL390GicDxe.inf
-  #INF SamsungPlatformPkg/ExynosPkg/InterruptDxe/InterruptDxe.inf
   INF SamsungPlatformPkg/ExynosPkg/TimerDxe/TimerDxe.inf
 
   #
@@ -176,9 +177,7 @@ READ_LOCK_STATUS   = TRUE
   #
   # Samsung specific Driver
   #
-  #INF ArmPlatformPkg/Drivers/SamsungTempDxe/SamsungTempDxe.inf
   INF SamsungPlatformPkg/ExynosPkg/SDHCDxe/SDHCDxe.inf
-  #INF ArmPlatformPkg/Drivers/Exynos4210DisplayDxe/Exynos4210DisplayDxe.inf
   INF SamsungPlatformPkg/ExynosPkg/Gpio/Gpio.inf
   #
   # PCI EMULATION
@@ -200,7 +199,6 @@ READ_LOCK_STATUS   = TRUE
   # USB HOST STACK
   #
   INF MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
-  #INF SamsungPlatformPkg/ExynosPkg/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
 
   #
   # UEFI application (Shell Embedded Boot Loader)
@@ -213,11 +211,6 @@ READ_LOCK_STATUS   = TRUE
   #
   INF MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   INF ArmPlatformPkg/Bds/Bds.inf
-
-  #INF RuleOverride = BINARY EdkShellBinPkg/FullShell/FullShell.inf
-  #INF RuleOverride = BINARY EdkShellBinPkg/Bin/Bin.inf
-  #INF RuleOverride = BINARY EdkShellBinPkg/MinimumShell/MinimumShell.inf
-
 
 [FV.FVMAIN_COMPACT]
 FvAlignment        = 8

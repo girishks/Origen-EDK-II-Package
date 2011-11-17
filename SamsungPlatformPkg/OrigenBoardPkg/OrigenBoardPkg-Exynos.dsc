@@ -107,6 +107,17 @@
   # L2 Cache Driver
   L2X0CacheLib|ArmPlatformPkg/Drivers/PL310L2Cache/PL310L2CacheSec.inf
 
+!if $(EDK2_SKIP_PEICORE)==1
+  PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
+  ExtractGuidedSectionLib|EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.inf
+  LzmaDecompressLib|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+  MemoryAllocationLib|EmbeddedPkg/Library/PrePiMemoryAllocationLib/PrePiMemoryAllocationLib.inf
+  HobLib|EmbeddedPkg/Library/PrePiHobLib/PrePiHobLib.inf
+  PrePiHobListPointerLib|ArmPlatformPkg/Library/PrePiHobListPointerLib/PrePiHobListPointerLib.inf
+  PlatformPeiLib|ArmPlatformPkg/PlatformPei/PlatformPeiLib.inf
+  MemoryInitPeiLib|ArmPlatformPkg/MemoryInitPei/MemoryInitPeiLib.inf
+!endif
+
 [LibraryClasses.common.PEI_CORE]
   ArmPlatformGlobalVariableLib|ArmPlatformPkg/Library/ArmPlatformGlobalVariableLib/Sec/SecArmPlatformGlobalVariableLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
@@ -228,7 +239,8 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
 
 !if $(EDK2_SKIP_PEICORE) == 1
-  gArmTokenSpaceGuid.PcdSkipPeiCore|TRUE
+  gArmPlatformTokenSpaceGuid.PcdSystemMemoryInitializeInSec|TRUE
+  gArmPlatformTokenSpaceGuid.PcdSendSgiToBringUpSecondaryCores|TRUE
 !endif
 
 [PcdsFixedAtBuild.common]
@@ -333,14 +345,14 @@
   #gArmTokenSpaceGuid.PcdArmMachineType|2925
   gArmTokenSpaceGuid.PcdArmMachineType |3455
   gArmPlatformTokenSpaceGuid.PcdDefaultBootDescription|L"SD-MMC Booting"
-  gArmPlatformTokenSpaceGuid.PcdDefaultBootDevicePath|L"VenHw(B615F1F5-5088-43CD-809C-A16E52487D00)/HD(1,MBR,0x6F20736B,0x1D6E74,0x58A400)/zImage"
+  gArmPlatformTokenSpaceGuid.PcdDefaultBootDevicePath|L"VenHw(B615F1F5-5088-43CD-809C-A16E52487D00)/HD(1,MBR,0x00000000,0x2000,0xEED000)/zImage"
   gArmPlatformTokenSpaceGuid.PcdDefaultBootArgument|"root=/dev/mmcblk0p2 rw rootwait console=ttySAC1,115200 init=/linuxrc"
   gArmPlatformTokenSpaceGuid.PcdDefaultBootType|1
   gArmPlatformTokenSpaceGuid.PcdFirmwareVendor|L"Samsung Origen Board"
 
 # Use the Serial console (ConIn & ConOut) and the Graphic driver (ConOut)
-  gArmPlatformTokenSpaceGuid.PcdDefaultConOutPaths|L"VenHw(6696936D-3637-467C-87CB-14EA8248948C)/Uart(115200,8,N,1)"
-  gArmPlatformTokenSpaceGuid.PcdDefaultConInPaths|L"VenHw(6696936D-3637-467C-87CB-14EA8248948C)/Uart(115200,8,N,1)"
+  gArmPlatformTokenSpaceGuid.PcdDefaultConOutPaths|L"VenHw(D3987D4B-971A-435F-8CAF-4967EB627241)/Uart(115200,8,N,1)/VenPcAnsi();VenHw(c5deae31-fad2-4030-841b-cfc9644d2c5b)"
+  gArmPlatformTokenSpaceGuid.PcdDefaultConInPaths|L"VenHw(D3987D4B-971A-435F-8CAF-4967EB627241)/Uart(115200,8,N,1)/VenPcAnsi()"
   gArmPlatformTokenSpaceGuid.PcdPlatformBootTimeOut|10
 
   #
@@ -363,12 +375,13 @@
 #
 # PEI Phase modules
 #
-!ifdef $(EDK2_SKIP_PEICORE)
+!if $(EDK2_SKIP_PEICORE) == 1
   ArmPlatformPkg/PrePi/PeiMPCore.inf {
     <LibraryClasses>
       ArmGicSecLib|ArmPkg/Drivers/PL390Gic/PL390GicLib.inf
       ArmLib|ArmPkg/Library/ArmLib/ArmV7/ArmV7Lib.inf
       ArmPlatformLib|SamsungPlatformPkg/SmdkBoardPkg/Library/SmdkBoardLib/SmdkBoardLib.inf
+      ArmPlatformGlobalVariableLib|ArmPlatformPkg/Library/ArmPlatformGlobalVariableLib/PrePi/PrePiArmPlatformGlobalVariableLib.inf
   }
 !else
   ArmPlatformPkg/PrePeiCore/PrePeiCoreMPCore.inf {
@@ -409,7 +422,13 @@
   EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
   EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
   EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
-  EmbeddedPkg/SimpleTextInOutSerial/SimpleTextInOutSerial.inf
+
+  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
+  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
+  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+  EmbeddedPkg/SerialDxe/SerialDxe.inf
+
   MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
   MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
