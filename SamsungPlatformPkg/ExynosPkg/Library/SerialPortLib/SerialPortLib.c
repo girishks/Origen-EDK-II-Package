@@ -144,5 +144,5 @@ SerialPortPoll (
         UINT32 UARTConsoleBase;
         UARTConsoleBase=PcdGet32(PcdConsoleUartBase);
 
-	return ((MmioRead32 (UARTConsoleBase + UTRSTAT_OFFSET) & UART_RX_EMPTY_FLAG_MASK) == 0);
+	return ((MmioRead32 (UARTConsoleBase + UTRSTAT_OFFSET) & UART_RX_EMPTY_FLAG_MASK) != 0);
 }
