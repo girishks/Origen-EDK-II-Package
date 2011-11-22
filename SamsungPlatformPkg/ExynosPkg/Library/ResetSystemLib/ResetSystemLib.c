@@ -31,7 +31,7 @@
 #include <Platform/ArmPlatform.h>
 
 VOID DestroyExynosMemMap(VOID);
-typedef VOID (EFIAPI *ptrImageStart)(VOID);
+typedef VOID (EFIAPI *CALL_STUB)(VOID);
 
 VOID
 DestroyExynosMemMap (
@@ -115,7 +115,7 @@ LibResetSystem (
   IN CHAR16           *ResetData OPTIONAL
   )
 {
-//  ptrImageStart   StartOfFv;
+  CALL_STUB   StartOfFv;
   UINTN PmuBase;
   if (ResetData != NULL) {
     DEBUG ((EFI_D_ERROR, "%s", ResetData));
@@ -126,10 +126,9 @@ LibResetSystem (
   switch (ResetType) {
   case EfiResetWarm:
     //Perform warm reset of the system by jumping to the begining of the FV
-//    StartOfFv = (ptrImageStart)(UINTN)PcdGet32(PcdFlashFvMainBase);
-//    StartOfFv ();PcdNormalFvBaseAddress
-	((ptrImageStart)PcdGet32(PcdFvBaseAddress))();
-	//((ptrImageStart)PcdGet32(PcdFlashFvMainBase))();
+//	((ptrImageStart)PcdGet32(PcdFvBaseAddress))();
+    StartOfFv = (CALL_STUB)(UINTN)PcdGet32(PcdFvBaseAddress);
+    StartOfFv ();
     break;
   case EfiResetCold:
   case EfiResetShutdown:

@@ -26,16 +26,17 @@
   ResetSystemLib.c
 
 [Packages]
-  ArmPkg/ArmPkg.dec
   MdePkg/MdePkg.dec
+  ArmPkg/ArmPkg.dec
   EmbeddedPkg/EmbeddedPkg.dec
   ArmPlatformPkg/ArmPlatformPkg.dec
   SamsungPlatformPkg/ExynosPkg/ExynosPkg.dec
 [LibraryClasses]
-  DebugLib
-  BaseLib
-  MemoryAllocationLib
   ArmLib
+  IoLib
+  BaseLib
+  DebugLib
+  MemoryAllocationLib
   CacheMaintenanceLib
 [FixedPcd]
   gArmTokenSpaceGuid.PcdFvBaseAddress
