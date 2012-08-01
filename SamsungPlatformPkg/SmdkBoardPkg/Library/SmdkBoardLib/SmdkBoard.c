@@ -149,6 +149,16 @@ ArmPlatformGetBootMode (
 VOID ArmPlatformInitializeSystemMemory(VOID) {
     // We do not need to initialize the System Memory on RTSM
 }
+
+RETURN_STATUS
+ArmPlatformInitialize (
+  IN  UINTN                     MpId
+  )
+{
+return RETURN_SUCCESS;
+}
+
+
 VOID
 ArmPlatformNormalInitialize (
   VOID

@@ -36,7 +36,7 @@
   SmdkBoard.c
   SmdkBoardSec.c
   SmdkBoardHelper.asm   | RVCT
-  SmdkBoardHelper.S     | GCC | ARMGCC
+  SmdkBoardHelper.S     | GCC
 
 [Protocols]
 

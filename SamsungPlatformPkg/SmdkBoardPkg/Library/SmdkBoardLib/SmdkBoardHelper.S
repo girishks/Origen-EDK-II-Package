@@ -27,6 +27,7 @@ GCC_ASM_EXPORT(ArmPlatformIsClockInitialized)
 GCC_ASM_EXPORT(ArmPlatformIsMemoryInitialized)
 GCC_ASM_EXPORT(ArmPlatformInitializeBootMemory)
 GCC_ASM_EXPORT(ArmPlatformSecBootAction)
+GCC_ASM_EXPORT(ArmPlatformSecBootMemoryInit)
 
 ASM_PFX(ArmPlatformTZPCInitialized):
         ldr     r0, =Exynos4210_TZPC0_BASE
@@ -341,6 +342,10 @@ cmu_11:
  *	 as there is no stack set up yet
  */
 ASM_PFX(ArmPlatformSecBootAction):
+	 bx    lr
+
+
+ASM_PFX(ArmPlatformSecBootMemoryInit):
 	 bx    lr
 
 /*

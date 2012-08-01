@@ -30,7 +30,7 @@
 [LibraryClasses]
   IoLib
   ArmLib
-  MemoryAllocationLib
+ 
 
 [Sources.common]
   SmdkBoard.c
