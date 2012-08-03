@@ -417,6 +417,7 @@ DisplayBlt(
 {
   UINT8 *VidBuf, *BltBuf, *VidBuf1;
   UINTN i, j;
+  EFI_STATUS Status = EFI_SUCCESS;
 
   switch(BltOperation) {
     case EfiBltVideoFill:
@@ -492,7 +493,7 @@ DisplayBlt(
       ASSERT_EFI_ERROR(Status);
   }
 
-  return EFI_SUCCESS;
+  return Status;
 }
 
 
