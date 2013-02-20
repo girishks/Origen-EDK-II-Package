@@ -35,6 +35,7 @@
 [Sources.common]
   SmdkBoard.c
   SmdkBoardMem.c
+  SmdkBoardHelper.S
 
 [Protocols]
 

@@ -10,6 +10,7 @@
  * WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
  */
 
+#include <Library/ArmLib.h>
 #include <AsmMacroIoLib.h>
 #include <Base.h>
 #include <Library/PcdLib.h>
@@ -28,6 +29,18 @@ GCC_ASM_EXPORT(ArmPlatformIsMemoryInitialized)
 GCC_ASM_EXPORT(ArmPlatformInitializeBootMemory)
 GCC_ASM_EXPORT(ArmPlatformSecBootAction)
 GCC_ASM_EXPORT(ArmPlatformSecBootMemoryInit)
+
+GCC_ASM_EXPORT(ArmPlatformGetCorePosition)
+
+//UINTN
+//ArmPlatformGetCorePosition (
+//  IN UINTN MpId
+//  );
+ASM_PFX(ArmPlatformGetCorePosition):
+  and	r1, r0, #ARM_CORE_MASK
+  and	r0, r0, #ARM_CLUSTER_MASK
+  add	r0, r1, r0, LSR #7
+  bx 	lr
 
 ASM_PFX(ArmPlatformTZPCInitialized):
         ldr     r0, =Exynos4210_TZPC0_BASE
