@@ -47,6 +47,7 @@
   PerformanceLib|MdePkg/Library/BasePerformanceLibNull/BasePerformanceLibNull.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
+  CpuExceptionHandlerLib|MdeModulePkg/Library/CpuExceptionHandlerLibNull/CpuExceptionHandlerLibNull.inf
 
   #
   # Uncomment (and comment out the next line) For RealView Debugger. The Standard IO window
@@ -85,6 +86,8 @@
   SerialPortLib|SamsungPlatformPkg/ExynosPkg/Library/SerialPortLib/SerialPortLib.inf
   TimerLib|SamsungPlatformPkg/ExynosPkg/Library/TimerLib/TimerLib.inf
   UefiRuntimeLib|MdePkg/Library/UefiRuntimeLib/UefiRuntimeLib.inf
+  ArmPlatformStackLib|ArmPlatformPkg/Library/ArmPlatformStackLib/ArmPlatformStackLib.inf
+  FdtLib|EmbeddedPkg/Library/FdtLib/FdtLib.inf
 
   # Samsung specific
   BdsLib|ArmPkg/Library/BdsLib/BdsLib.inf
@@ -98,16 +101,16 @@
 
 [LibraryClasses.common.SEC]
   ArmLib|ArmPkg/Library/ArmLib/ArmV7/ArmV7LibSec.inf
-  ArmGicSecLib|ArmPkg/Drivers/PL390Gic/PL390GicSecLib.inf
-  ArmGicLib|ArmPkg/Drivers/PL390Gic/PL390GicLib.inf
+  ArmTrustedMonitorLib|ArmPlatformPkg/Library/ArmTrustedMonitorLibNull/ArmTrustedMonitorLibNull.inf
+  ArmGicLib|ArmPkg/Drivers/PL390Gic/PL390GicSecLib.inf
   ArmPlatformGlobalVariableLib|ArmPlatformPkg/Library/ArmPlatformGlobalVariableLib/Sec/SecArmPlatformGlobalVariableLib.inf
-  ArmPlatformLib|SamsungPlatformPkg/SmdkBoardPkg/Library/SmdkBoardLib/SmdkBoardSecLib.inf
+  ArmPlatformSecLib|SamsungPlatformPkg/SmdkBoardPkg/Library/SmdkBoardLib/SmdkBoardSecLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
   PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
   # L2 Cache Driver
   L2X0CacheLib|ArmPlatformPkg/Drivers/PL310L2Cache/PL310L2CacheSec.inf
 
-!if $(EDK2_SKIP_PEICORE)==1
+!ifdef $(EDK2_SKIP_PEICORE)
   PrePiLib|EmbeddedPkg/Library/PrePiLib/PrePiLib.inf
   ExtractGuidedSectionLib|EmbeddedPkg/Library/PrePiExtractGuidedSectionLib/PrePiExtractGuidedSectionLib.inf
   LzmaDecompressLib|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
@@ -168,8 +171,8 @@
   UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
 
 [LibraryClasses.common.DXE_DRIVER]
-  ArmPlatformGlobalVariableLib|ArmPlatformPkg/Library/ArmPlatformGlobalVariableLib/Sec/SecArmPlatformGlobalVariableLib.inf
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
+  ArmPlatformGlobalVariableLib|ArmPlatformPkg/Library/ArmPlatformGlobalVariableLib/Sec/SecArmPlatformGlobalVariableLib.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   PerformanceLib|MdeModulePkg/Library/DxePerformanceLib/DxePerformanceLib.inf
   ReportStatusCodeLib|IntelFrameworkModulePkg/Library/DxeReportStatusCodeLibFramework/DxeReportStatusCodeLib.inf
@@ -238,7 +241,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
 
-!if $(EDK2_SKIP_PEICORE) == 1
+!ifdef $(EDK2_SKIP_PEICORE)
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryInitializeInSec|TRUE
   gArmPlatformTokenSpaceGuid.PcdSendSgiToBringUpSecondaryCores|TRUE
 !endif
@@ -301,6 +304,7 @@
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize|0x01000000
   # Stacks for MPCores in Secure World
   gArmPlatformTokenSpaceGuid.PcdCPUCoresSecStackBase|0x4B000000     # Top of SEC Stack for Secure World
+	gArmPlatformTokenSpaceGuid.PcdSecGlobalVariableSize|0x100
 
   # Stacks for MPCores in Monitor Mode
   gArmPlatformTokenSpaceGuid.PcdCPUCoresSecMonStackBase|0x4A000000  # Top of SEC Stack for Monitor World
@@ -376,7 +380,7 @@
 #
 # PEI Phase modules
 #
-!if $(EDK2_SKIP_PEICORE) == 1
+!ifdef $(EDK2_SKIP_PEICORE)
   ArmPlatformPkg/PrePi/PeiMPCore.inf {
     <LibraryClasses>
       ArmGicSecLib|ArmPkg/Drivers/PL390Gic/PL390GicLib.inf
